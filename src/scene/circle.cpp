@@ -3,47 +3,37 @@
 
 void Circle::GenerateVerticies()
 {
-    SectorCount = 20;
 
-    float theta_radians = (SectorCount / 360) * (2*M_PI / 360);
+    // how big of a slice each of the triangles will take up
+    float thetaStep = 2.0f * M_PI / SectorCount;
 
-    for (int sector = 0; sector <= SectorCount; sector++)
+    for (int sector = 0; sector < SectorCount; sector++)
     {
+        float a0 = thetaStep * sector;
+        float a1 = thetaStep * (sector + 1);
 
-        // add center vert
+        // center
         Verticies.push_back(0.0f);
         Verticies.push_back(0.0f);
         Verticies.push_back(0.0f);
 
-        float angle_first_line = theta_radians * sector;
-        float angle_second_line = theta_radians * (sector + 1);
-
-        // add second vert
-        float x_first = cos(angle_first_line);
-        float y_first = sin(angle_first_line);
-        Verticies.push_back(x_first);
-        Verticies.push_back(y_first);
+        // first point
+        Verticies.push_back(radius * cos(a0));
+        Verticies.push_back(radius * sin(a0));
         Verticies.push_back(0.0f);
 
-
-        // add third vert
-        float x_second = cos(angle_second_line);
-        float y_second = sin(angle_second_line);
-        Verticies.push_back(x_second);
-        Verticies.push_back(y_second);
+        // second point
+        Verticies.push_back(radius * cos(a1));
+        Verticies.push_back(radius * sin(a1));
         Verticies.push_back(0.0f);
 
-        VertexCount += 9;
-
-
+        VertexCount += 3;
     }
-
-    std::cout << Verticies.data() << std::endl;
-    
 }
 
 
-Circle::Circle() 
+Circle::Circle(int sections, float radius) 
+: SectorCount(sections), radius(radius)
 {
 
     GenerateVerticies();
@@ -61,7 +51,7 @@ Circle::Circle()
 
     
     // static draw tells gpu the data wont change much. 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Verticies), Verticies.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (Verticies.size() * sizeof(float)), Verticies.data(), GL_STATIC_DRAW);
 
     // turn on vert slot zero, usually used for positions
     glEnableVertexAttribArray(0);

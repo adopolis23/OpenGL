@@ -7,7 +7,13 @@ class Object
 {
 
 public:
+    // the 4 dimentional model of the object
     glm::mat4 model;
+
+    // 3d matricies for position rotation and scale
+    glm::vec3 position{0.0f};
+    glm::vec3 rotation{0.0f};
+    glm::vec3 scale{1.0f};
 
     // vertex array object
     unsigned int vao = 0;

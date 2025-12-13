@@ -10,7 +10,7 @@
 
 int main()
 {
-    Window* window = new Window("Test", 800, 600, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    Window* window = new Window("Test", 600, 600, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     Renderer* renderer = new Renderer();
     Scene scene;
 
@@ -20,8 +20,12 @@ int main()
         #version 330 core
         layout (location = 0) in vec3 aPos;
         uniform mat4 model;
-        void main() {
-            gl_Position = model * vec4(aPos, 1.0);
+        uniform mat4 view;
+        uniform mat4 projection;
+
+        void main()
+        {
+            gl_Position = projection * view * model * vec4(aPos, 1.0);
         }
         )",
         R"(
@@ -33,10 +37,9 @@ int main()
         )"
     );
 
-    Circle box;
-    box.shader = &shader;
-    //box.material = new Material{ &shader }; // or simple shader pointer
-    scene.objects.push_back(&box);
+    Circle circle(40, 0.1);
+    circle.shader = &shader;
+    scene.objects.push_back(&circle);
 
     bool running = true;
     SDL_Event event;
@@ -49,9 +52,16 @@ int main()
                 running = false;
         }
 
-        angle += 0.01f;
+        circle.model = glm::mat4(1.0f);
 
-        box.model = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0, 0, 1));
+        circle.position = { 0.5f, 0.2f, 0.0f };
+        circle.model = glm::translate(circle.model, circle.position);
+
+        circle.model = glm::rotate(circle.model, circle.rotation.x, {1, 0, 0});
+        circle.model = glm::rotate(circle.model, circle.rotation.y, {0, 1, 0});
+        circle.model = glm::rotate(circle.model, circle.rotation.z, {0, 0, 1});
+        
+        circle.model = glm::scale(circle.model, circle.scale);
 
         renderer->Render(scene);
 

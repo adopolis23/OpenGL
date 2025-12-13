@@ -9,6 +9,8 @@ void Renderer::Render(const Scene& scene)
         obj->shader->bind();
 
         obj->shader->setMat4("model", obj->model);
+        obj->shader->setMat4("view", view);
+        obj->shader->setMat4("projection", projection);
 
         glBindVertexArray(obj->vao);
         glDrawArrays(GL_TRIANGLES, 0, obj->VertexCount);
