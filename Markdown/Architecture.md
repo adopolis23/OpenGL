@@ -1,13 +1,16 @@
 # Application Architecture - SDL
 
 Application
-  ├─ Window (handles SDL window + GL context)
-  ├─ Renderer (sets GL state, draws objects)
-  ├─ Scene (stores objects)
-  │     ├─ Box
-  │     ├─ Mesh
-  │     └─ etc.
-  └─ Main loop (poll events → update → render)
+* Window (handles SDL window + GL context)
+* Renderer (sets GL state, draws objects)
+* Scene (stores objects)
+  - Box
+  - Mesh
+  - etc.
+* Camera
+  - Bounds
+  - Projection for the renderer to use.
+* Main loop (poll events → update → render)
 
 
 ## Application
@@ -53,3 +56,8 @@ The renderer will also keep track of shaders maybe?
 
 Will hold all information about objects in the scene such as the particles.
 Will have something like `std::vector<Object*> objects;`
+
+## Camera
+
+Camera will store the worlds bounds that are a product of the projection
+The Renderer will use the projection when drawing objects.

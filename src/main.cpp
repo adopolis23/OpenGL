@@ -7,11 +7,13 @@
 #include "renderer/renderer.h"
 #include "scene/circle.h"
 #include "shaders/shader.h"
+#include "renderer/camera.h"
 
 int main()
 {
     Window* window = new Window("Test", 800, 600, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    Renderer* renderer = new Renderer(800, 600);
+    Camera camera(800, 600);
+    Renderer* renderer = new Renderer(&camera);
     Scene scene;
 
 
@@ -27,7 +29,7 @@ int main()
                 running = false;
         }
 
-        circle.position.x = renderer->right - 0.1f;
+        circle.position.x = camera.right_world_bound - 0.1f;
 
         renderer->Render(scene);
         window->SwapBuffers();

@@ -5,29 +5,21 @@
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "globals.h"
+#include "camera.h"
 
 class Renderer
 {
 
 public:
-    Renderer(int w, int h);
+    Renderer(const Camera* cam);
     void Render(const Scene& scene);
-
-    float aspect_ratio;
-
-    float world_height;
-    float world_width;
-
-    float left;
-    float right;
-    float top;
-    float bottom;
-
 private:
-    int window_width, window_height;
 
     glm::mat4 view;
     glm::mat4 projection;
+
+    // pointer to external camera object that stores the projetion used for rendering
+    const Camera* camera;
 
     Shader* defaultShader;
 
