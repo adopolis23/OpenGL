@@ -29,8 +29,11 @@ public:
 
     virtual ~Object() {}
 
+    virtual void GenerateObjectModel() = 0;
+    
 private:
 
-    //virtual void GenerateVerticies();
+    // the =0 makes this pue virtual so no implementation in the base class is expected
+    virtual void GenerateVerticies() = 0;
 
 };

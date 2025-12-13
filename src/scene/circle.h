@@ -2,7 +2,7 @@
 #include "object.h"
 
 #include <glad/glad.h>
-//#include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
 
@@ -10,6 +10,7 @@ class Circle : public Object {
 
 public:
     Circle(int sections, float radius);
+    void GenerateObjectModel();
 
 private:
     int SectorCount;

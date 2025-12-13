@@ -10,8 +10,8 @@
 
 int main()
 {
-    Window* window = new Window("Test", 600, 600, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    Renderer* renderer = new Renderer();
+    Window* window = new Window("Test", 800, 600, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    Renderer* renderer = new Renderer(800, 600);
     Scene scene;
 
     // simple shader
@@ -52,19 +52,9 @@ int main()
                 running = false;
         }
 
-        circle.model = glm::mat4(1.0f);
-
-        circle.position = { 0.5f, 0.2f, 0.0f };
-        circle.model = glm::translate(circle.model, circle.position);
-
-        circle.model = glm::rotate(circle.model, circle.rotation.x, {1, 0, 0});
-        circle.model = glm::rotate(circle.model, circle.rotation.y, {0, 1, 0});
-        circle.model = glm::rotate(circle.model, circle.rotation.z, {0, 0, 1});
-        
-        circle.model = glm::scale(circle.model, circle.scale);
+        circle.GenerateObjectModel();
 
         renderer->Render(scene);
-
         window->SwapBuffers();
     }
 

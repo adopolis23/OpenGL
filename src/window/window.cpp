@@ -49,26 +49,6 @@ int Window::initialize_window()
 
     SDL_GL_SetSwapInterval(1); // vsync
 
-    //main loop stuff to be moved
-
-    // bool running = true;
-    // SDL_Event e;
-
-    // while (running) {
-    //     while (SDL_PollEvent(&e)) {
-    //         if (e.type == SDL_QUIT) running = false;
-    //     }
-
-    //     glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
-    //     glClear(GL_COLOR_BUFFER_BIT);
-
-    //     SDL_GL_SwapWindow(window);
-    // }
-
-    // SDL_GL_DeleteContext(GLContext);
-    // SDL_DestroyWindow(window);
-    // SDL_Quit();
-
 
     return EXIT_SUCCESS;
 }
