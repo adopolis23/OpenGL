@@ -5,7 +5,8 @@ void Renderer::Render(const Scene& scene)
     glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (auto obj : scene.objects) {
+    for (auto obj : scene.objects) 
+    {
 
         // bind the default shader for now every time
         defaultShader->bind();
