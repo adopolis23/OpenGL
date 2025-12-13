@@ -23,10 +23,6 @@ public:
     int VertexCount = 0;
     std::vector<float> Verticies;
 
-    // going to swap this out for a material later maybe?
-    Shader* shader;
-    //Material* material = nullptr;
-
     virtual ~Object() {}
 
     virtual void GenerateObjectModel() = 0;

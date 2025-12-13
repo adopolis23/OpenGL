@@ -21,6 +21,7 @@ project "ParticalSimulation"
     includedirs {
         "src",
         "src/shaders",
+        "src/scene",
         "libs/glad/include",
         "/usr/include",
     }
