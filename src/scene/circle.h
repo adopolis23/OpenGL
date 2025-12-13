@@ -9,7 +9,7 @@
 class Circle : public Object {
 
 public:
-    Circle(int sections, float radius);
+    Circle(int sections, float radius, glm::vec2 pos);
     void GenerateObjectModel();
 
 private:

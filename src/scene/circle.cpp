@@ -32,9 +32,11 @@ void Circle::GenerateVerticies()
 }
 
 
-Circle::Circle(int sections, float radius) 
+Circle::Circle(int sections, float radius, glm::vec2 pos) 
 : SectorCount(sections), radius(radius)
 {
+
+    position = glm::vec3{pos, 0.0f};
 
     GenerateVerticies();
 

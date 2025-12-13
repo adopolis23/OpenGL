@@ -16,9 +16,18 @@ int main()
     Renderer* renderer = new Renderer(&camera);
     Scene scene;
 
+    // adds the particles to the simulation, might move to some function in scene maybe?
+    int num_particles = 30;
+    float radius = 0.02f;
+    for (int i = 0; i < num_particles; i++)
+    {
+        scene.objects.push_back(
+            // this math just makes a 2d array of objects added to the scene
+            new Circle(20, radius, glm::vec2{0.0f + (radius * 4 * (i % 10)), 0.0f - (radius * 4 * (i / 10))})
+        );
+    }
 
-    Circle circle(40, 0.1);
-    scene.objects.push_back(&circle);
+
 
     bool running = true;
     SDL_Event event;
@@ -28,8 +37,6 @@ int main()
             if (event.type == SDL_QUIT)
                 running = false;
         }
-
-        circle.position.x = camera.right_world_bound - 0.1f;
 
         renderer->Render(scene);
         window->SwapBuffers();
