@@ -27,7 +27,7 @@ int main()
                 running = false;
         }
 
-        circle.GenerateObjectModel();
+        circle.position.x = renderer->right - 0.1f;
 
         renderer->Render(scene);
         window->SwapBuffers();
