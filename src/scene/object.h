@@ -29,7 +29,7 @@ public:
     
 private:
 
-    // the =0 makes this pue virtual so no implementation in the base class is expected
+    // the =0 makes this pure virtual so no implementation in the base class is expected
     virtual void GenerateVerticies() = 0;
 
 };

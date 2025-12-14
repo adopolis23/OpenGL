@@ -1,8 +1,8 @@
-workspace "ParticalSimulation"
+workspace "ParticleSimulation"
     architecture "x86_64"
     configurations { "Debug", "Release" }
 
-project "ParticalSimulation"
+project "ParticleSimulation"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
@@ -22,6 +22,7 @@ project "ParticalSimulation"
         "src",
         "src/shaders",
         "src/scene",
+        "src/physicsEngine",
         "libs/glad/include",
         "/usr/include",
     }

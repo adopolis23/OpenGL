@@ -13,7 +13,7 @@
 
 int main()
 {
-    Window* window = new Window("Test", 800, 600, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    Window* window = new Window("Test", 800, 800, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     Camera camera(800, 600);
     Renderer* renderer = new Renderer(&camera);
     Engine* engine = new Engine(&camera);

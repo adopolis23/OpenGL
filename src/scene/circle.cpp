@@ -46,7 +46,7 @@ Circle::Circle(int sections, float radius, glm::vec2 pos)
     glGenBuffers(1, &vbo);
 
 
-    // used vertex array provided
+    // use vertex array provided
     glBindVertexArray(vao);
     // binds vbo and fills it will data
     glBindBuffer(GL_ARRAY_BUFFER, vbo);

@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "globals.h"
 #include "camera.h"
+#include "engine.h"
+#include "densityBackground.h"
 
 class Renderer
 {
@@ -13,6 +15,16 @@ class Renderer
 public:
     Renderer(const Camera* cam);
     void Render(const Scene& scene);
+
+    // initialize the density texture TODO
+    void InitDensityResources(const DensityField& densityField);
+    
+    // upload the density field data to gpu
+    void UploadDensity(const DensityField& densityField);
+    
+    // render density field background
+    void RenderDensityBackground();
+
 private:
 
     glm::mat4 view;
@@ -22,5 +34,9 @@ private:
     const Camera* camera;
 
     Shader* defaultShader;
+
+    GLuint densityTexture; 
+    Shader* densityShader;
+    DensityBackground* densityBackground;
 
 };
