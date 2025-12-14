@@ -35,9 +35,9 @@ Renderer::Renderer(const Camera* cam)
     densityBackground = new DensityBackground();
 
     // set the default shader for now. This might be replaced per object in the future
-    defaultShader = new Shader("/home/brandon/dev/OpenGL/src/shaders/vertex/default_vertex.glsl", "/home/brandon/dev/OpenGL/src/shaders/fragment/default_fragment.glsl");
+    defaultShader = new Shader("/home/bran406/dev/OpenGL/src/shaders/vertex/default_vertex.glsl", "/home/bran406/dev/OpenGL/src/shaders/fragment/default_fragment.glsl");
 
-    densityShader = new Shader("/home/brandon/dev/OpenGL/src/shaders/vertex/density_vertex.glsl", "/home/brandon/dev/OpenGL/src/shaders/fragment/density_fragment.glsl");
+    densityShader = new Shader("/home/bran406/dev/OpenGL/src/shaders/vertex/density_vertex.glsl", "/home/bran406/dev/OpenGL/src/shaders/fragment/density_fragment.glsl");
 }
 
 

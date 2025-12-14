@@ -16,7 +16,8 @@ struct DensityField
 
     int width;
     int height;
-    float cellSize; // how many world units per cell
+    float cellSizeX; // how many world units per cell
+    float cellSizeY;
 
     std::vector<float> density;
 
@@ -45,5 +46,11 @@ private:
 
     // pointer to the global camera for this scene
     const Camera* camera;
+
+    // todo: might want to move all the density stuff to seperate file sometime
+    // radius: radius of the influence of the kernel
+    // dist: distnace from the center you want to calculate influence
+    float DensitySmoothingKernel(float radius, float dist);
+    float kernelRadius = 0.1f;
 
 };
