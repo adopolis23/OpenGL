@@ -6,20 +6,55 @@ Engine::Engine(const Camera* cam)
     camera = cam;
 
     //set up the density field
-    densityField.width = 100;
-    densityField.height = 100;
+    densityField.width = 200;
+    densityField.height = 200;
     densityField.cellSize = cam->world_height / (float)densityField.height;
     densityField.density.resize(densityField.width * densityField.height);
 }
 
+
+void Engine::HandleCollisions(Object* obj)
+{
+    // left side of object contacts left wall
+    if (obj->position.x - obj->radius < camera->left_world_bound && obj->velocity.x < 0)
+    {
+        obj->velocity.x *= -1;
+    }
+
+    // right side of object contacts right wall
+    if (obj->position.x + obj->radius > camera->right_world_bound && obj->velocity.x > 0)
+    {
+        obj->velocity.x *= -1;
+    }
+
+    // top of object contacts top wall
+    if (obj->position.y + obj->radius > camera->top_world_bound && obj->velocity.y > 0)
+    {
+        obj->velocity.y *= -1;
+    }
+
+    // bottom of object contacs bottom wall
+    if (obj->position.y - obj->radius < camera->bottom_world_bound && obj->velocity.y < 0)
+    {
+        obj->velocity.y *= -1;
+    }
+}
+
+
+
 void Engine::Update(Scene& scene, float dt)
 {
 
+    // add velocities to each particles position
     for (auto obj : scene.objects)
     {
-        continue; 
+        obj->position.x += obj->velocity.x * dt;
+        obj->position.y += obj->velocity.y * dt;
+
+        HandleCollisions(obj);
     }
 
+    
     CalculateDensity(scene);
 }
 
@@ -49,9 +84,6 @@ void Engine::CalculateDensity(const Scene& scene)
         densityField.density[(gy * densityField.width) + gx] += 1.0;
 
     }
-
-
-    //densityField.density[0 * 0 + 0] += 10.0;
 
 
 }

@@ -23,6 +23,10 @@ public:
     int VertexCount = 0;
     std::vector<float> Verticies;
 
+    glm::vec3 velocity; // world units per second
+    
+    float radius;
+
     virtual ~Object() {}
 
     virtual void GenerateObjectModel() = 0;

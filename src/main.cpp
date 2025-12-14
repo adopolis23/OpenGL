@@ -20,8 +20,8 @@ int main()
     Scene scene;
 
     // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 1;
-    float radius = 0.02f;
+    int num_particles = 30;
+    float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {
         scene.objects.push_back(
@@ -38,7 +38,10 @@ int main()
 
     renderer->InitDensityResources(engine->densityField);
 
+    long iter = 0;
+
     while (running) {
+        iter++;
 
         auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -58,7 +61,11 @@ int main()
 
         dt = iterationTime.count();
         float fps = 1 / timeInSeconds.count();
-        printf("%f fps\n", fps);
+
+        if (iter % 200 == 0)
+        {
+            printf("%f fps\n", fps);
+        }
     }
 
     return 0;

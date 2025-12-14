@@ -41,6 +41,8 @@ public:
     DensityField densityField;
 private:
 
+    void HandleCollisions(Object* obj);
+
     // pointer to the global camera for this scene
     const Camera* camera;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "object.h"
+#include "globals.h"
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,7 +15,8 @@ public:
 
 private:
     int SectorCount;
-    float radius;
+
+    void InitVelocity();
 
     void GenerateVerticies();
 

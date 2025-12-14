@@ -32,11 +32,32 @@ void Circle::GenerateVerticies()
 }
 
 
+void Circle::InitVelocity()
+{
+    // TODO: might move this so each particle doesnt choose its own speed.
+    float minSpeed = 0.00005f;
+    float maxSpeed = 0.001f;
+
+    // choose angle for the velocity to follow
+    float angle = RandomFloat(0.0f, 2.0f * M_PI);
+
+    glm::vec2 dir(cos(angle), sin(angle));
+
+    float speed = RandomFloat(minSpeed, maxSpeed);
+
+    velocity = glm::vec3{(dir * speed), 0.0f};
+
+}
+
+
 Circle::Circle(int sections, float radius, glm::vec2 pos) 
-: SectorCount(sections), radius(radius)
+: SectorCount(sections)
 {
 
+    this->radius = radius;
     position = glm::vec3{pos, 0.0f};
+
+    InitVelocity();
 
     GenerateVerticies();
 
