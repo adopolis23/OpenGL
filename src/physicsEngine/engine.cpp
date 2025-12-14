@@ -26,19 +26,32 @@ void Engine::Update(Scene& scene, float dt)
 // TODO: fix this test density calculation
 void Engine::CalculateDensity(const Scene& scene)
 {
+    float u,v;
+    int gx, gy;
+
     // reset d-field to all 0s
     std::fill(densityField.density.begin(), densityField.density.end(), 0.0f);
 
     for (auto obj : scene.objects)
     {
-        int x_bin = (obj->position.x * (densityField.width / 2)) + (densityField.width / 2);
+        // convert world positions into [0,1] range
+        u = (obj->position.x - camera->left_world_bound) / (camera->right_world_bound - camera->left_world_bound);
+        v = (obj->position.y - camera->bottom_world_bound) / (camera->top_world_bound - camera->bottom_world_bound);
+
+        // convert world position into bin values for the density field
+        gx = int(u * densityField.width);
+        gy = int(v * densityField.height);
+
+        gx = std::clamp(gx, 0, densityField.width  - 1);
+        gy = std::clamp(gy, 0, densityField.height - 1);
+
         
-        for (int y = 0; y < 100; y++)
-        {
-            densityField.density[(y*100) + x_bin] += 1.0;
-        }
+        densityField.density[(gy * densityField.width) + gx] += 1.0;
+
     }
 
+
+    //densityField.density[0 * 0 + 0] += 10.0;
 
 
 }
