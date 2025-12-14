@@ -37,10 +37,10 @@ public:
     // takes a physics step for objects in a scene. scaled by the time that has passed between draws `dt`
     void Update(Scene& scene, float dt);
 
+    DensityField densityField;
 private:
 
     // pointer to the global camera for this scene
     const Camera* camera;
-    DensityField densityField;
 
 };

@@ -11,6 +11,7 @@ public:
     void bind();
 
     void setMat4(const std::string& name, const glm::mat4& m);
+    void setInt(const std::string& name, int value);
 
     unsigned int id;
 

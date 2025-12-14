@@ -90,7 +90,7 @@ void Renderer::RenderDensityBackground()
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, densityTexture);
-    //densityShader.setInt("uDensity", 0);
+    densityShader->setInt("uDensity", 0);
 
     glBindVertexArray(densityBackground->vao);
     glDrawArrays(GL_TRIANGLES, 0, densityBackground->VertexCount);

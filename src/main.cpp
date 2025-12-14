@@ -36,6 +36,8 @@ int main()
     SDL_Event event;
     double dt = 0.0f;
 
+    renderer->InitDensityResources(engine->densityField);
+
     while (running) {
 
         auto startTime = std::chrono::high_resolution_clock::now();
@@ -46,6 +48,7 @@ int main()
         }
 
         engine->Update(scene, dt);
+        renderer->UploadDensity(engine->densityField);
         renderer->Render(scene);
         window->SwapBuffers();
 

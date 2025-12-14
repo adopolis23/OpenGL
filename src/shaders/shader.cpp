@@ -53,6 +53,12 @@ void Shader::setMat4(const std::string& name, const glm::mat4& m) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(m));
 }
 
+void Shader::setInt(const std::string& name, int value)
+{
+    GLint loc = glGetUniformLocation(id, name.c_str());
+    glUniform1i(loc, value);
+}
+
 
 // loads shader from file, maybe this should be a general util function for loading strings from files..
 std::string Shader::LoadShaderFromFile(const std::string& path)
