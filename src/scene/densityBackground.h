@@ -1,10 +1,10 @@
 #pragma once
-#include "object.h"
+#include "physicsObject.h"
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-class DensityBackground : public Object
+class DensityBackground : public PhysicsObject
 {
 
 public:

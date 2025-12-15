@@ -1,14 +1,14 @@
 #pragma once
 
 #include <vector>
-#include "object.h"
+#include "physicsObject.h"
 
 
 class Scene
 {
     
 public:
-    std::vector<Object*> objects;
+    std::vector<PhysicsObject*> objects;
 
 private:
 

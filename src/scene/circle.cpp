@@ -51,7 +51,7 @@ void Circle::InitVelocity()
 
 
 Circle::Circle(int sections, float radius, glm::vec2 pos) 
-: SectorCount(sections)
+: PhysicsObject(), SectorCount(sections)
 {
 
     this->radius = radius;

@@ -3,10 +3,24 @@
 #include "shader.h"
 #include <vector>
 
-class Object
+class PhysicsObject
 {
 
 public:
+    PhysicsObject()
+    {
+        // set this objects unique ID
+        objectId = objectCount;
+        objectCount++;
+    }
+
+    ~PhysicsObject()
+    {
+        objectCount--;
+    }
+
+    int objectId;
+
     // the 4 dimentional model of the object
     glm::mat4 model;
 
@@ -27,11 +41,11 @@ public:
     
     float radius;
 
-    virtual ~Object() {}
-
     virtual void GenerateObjectModel() = 0;
     
 private:
+
+    static int objectCount;
 
     // the =0 makes this pure virtual so no implementation in the base class is expected
     virtual void GenerateVerticies() = 0;

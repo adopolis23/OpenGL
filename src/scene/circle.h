@@ -1,5 +1,5 @@
 #pragma once
-#include "object.h"
+#include "physicsObject.h"
 #include "globals.h"
 
 #include <glad/glad.h>
@@ -7,7 +7,7 @@
 
 #include <vector>
 
-class Circle : public Object {
+class Circle : public PhysicsObject {
 
 public:
     Circle(int sections, float radius, glm::vec2 pos);

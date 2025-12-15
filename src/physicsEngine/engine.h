@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
+#include <unordered_map>
 
 #include "scene.h"
 #include "renderer/camera.h"
@@ -34,25 +35,31 @@ public:
     // engine needs a ref to the camera to compute collisions and effects with the walls
     Engine(const Camera* cam);
 
-    void CalculateDensity(const Scene& scene);
-
+    float CalculateDensityPosition(const Scene& scene, const glm::vec3& position);
+    
     // takes a physics step for objects in a scene. scaled by the time that has passed between draws `dt`
     void Update(Scene& scene, float dt);
-
+    
     DensityField densityField;
+
+    // stores particle ids and the (most recent) density gradient at their position
+    std::unordered_map<int, glm::vec2> particleDensityGradient;
+
+
 private:
-
-    void HandleCollisions(Object* obj);
+    
+    void HandleCollisions(PhysicsObject* obj);
     float collisionDampingFactor = 0.95f;
-
+    
     // pointer to the global camera for this scene
     const Camera* camera;
-
+    
     // todo: might want to move all the density stuff to seperate file sometime
     // radius: radius of the influence of the kernel
     // dist: distnace from the center you want to calculate influence
     float DensitySmoothingKernel(float radius, float dist);
     float DensitySmoothingKernelDerivative(float radius, float dist);
+    void CalculateDensityField(const Scene& scene);
     float kernelRadius = 0.4f;
 
 };

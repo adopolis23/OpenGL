@@ -14,7 +14,7 @@ Engine::Engine(const Camera* cam)
 }
 
 
-void Engine::HandleCollisions(Object* obj)
+void Engine::HandleCollisions(PhysicsObject* obj)
 {
     bool collision = false;
 
@@ -68,11 +68,11 @@ void Engine::Update(Scene& scene, float dt)
     }
 
     
-    CalculateDensity(scene);
+    CalculateDensityField(scene);
 }
 
-// TODO: fix this test density calculation
-void Engine::CalculateDensity(const Scene& scene)
+
+void Engine::CalculateDensityField(const Scene& scene)
 {
     // just a constand used to make the effect of each particle lower.
     float mass = 1.0f;
@@ -116,6 +116,8 @@ void Engine::CalculateDensity(const Scene& scene)
                 float dy = cellCenterY - obj->position.y;
                 float dist = std::sqrt(dx * dx + dy * dy);
 
+                if (dist > kernelRadius) continue;
+
                 float w = DensitySmoothingKernel(kernelRadius, dist);
 
                 if (w > 0.0f)
@@ -127,6 +129,26 @@ void Engine::CalculateDensity(const Scene& scene)
 
 
     }
+}
+
+float Engine::CalculateDensityPosition(const Scene& scene, const glm::vec3& position)
+{
+    float desnityValue = 0.0f;
+    float dist, dx, dy;
+
+    // for each particle, find its contribution at this position and add them up.
+    for (auto obj : scene.objects)
+    {
+        dx = position.x - obj->position.x;
+        dy = position.y - obj->position.y;
+        dist = std::sqrt(dx * dx + dy * dy);
+
+        if (dist > kernelRadius) continue;
+    }
+
+    desnityValue = DensitySmoothingKernel(kernelRadius, dist);
+
+    return desnityValue;
 }
 
 float Engine::DensitySmoothingKernel(float radius, float dist)
