@@ -43,6 +43,7 @@ public:
 private:
 
     void HandleCollisions(Object* obj);
+    float collisionDampingFactor = 0.95f;
 
     // pointer to the global camera for this scene
     const Camera* camera;
@@ -51,6 +52,7 @@ private:
     // radius: radius of the influence of the kernel
     // dist: distnace from the center you want to calculate influence
     float DensitySmoothingKernel(float radius, float dist);
+    float DensitySmoothingKernelDerivative(float radius, float dist);
     float kernelRadius = 0.4f;
 
 };
