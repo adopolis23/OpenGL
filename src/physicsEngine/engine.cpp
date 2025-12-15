@@ -6,8 +6,8 @@ Engine::Engine(const Camera* cam)
     camera = cam;
 
     //set up the density field
-    densityField.width = 100;
-    densityField.height = 100;
+    densityField.width = 200;
+    densityField.height = 200;
     densityField.cellSizeX = cam->world_width / (float)densityField.width;
     densityField.cellSizeY = cam->world_height / (float)densityField.height;
     densityField.density.resize(densityField.width * densityField.height);
@@ -62,6 +62,9 @@ void Engine::Update(Scene& scene, float dt)
 // TODO: fix this test density calculation
 void Engine::CalculateDensity(const Scene& scene)
 {
+    // just a constand used to make the effect of each particle lower.
+    float damper_constant = 1.0f;
+
     // reset d-field to all 0s
     std::fill(densityField.density.begin(), densityField.density.end(), 0.0f);
 
@@ -105,7 +108,7 @@ void Engine::CalculateDensity(const Scene& scene)
 
                 if (w > 0.0f)
                 {
-                    densityField.density[y * densityField.width + x] += w;
+                    densityField.density[y * densityField.width + x] += w / damper_constant;
                 }
             }
         }

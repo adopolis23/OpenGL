@@ -51,6 +51,6 @@ private:
     // radius: radius of the influence of the kernel
     // dist: distnace from the center you want to calculate influence
     float DensitySmoothingKernel(float radius, float dist);
-    float kernelRadius = 0.1f;
+    float kernelRadius = 0.4f;
 
 };
