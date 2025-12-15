@@ -8,7 +8,7 @@ out vec4 FragColor;
 void main()
 {
     // damps the effect of all density function, tunable.
-    float damper_constant = 0.05;
+    float damper_constant = 0.01;
 
     float d = texture(uDensity, vUV).r;
     d *= damper_constant;

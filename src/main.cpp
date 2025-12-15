@@ -20,13 +20,13 @@ int main()
     Scene scene;
 
     // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 100;
+    int num_particles = 500;
     float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {
         scene.objects.push_back(
             // this math just makes a 2d array of objects added to the scene
-            new Circle(20, radius, glm::vec2{0.0f + (radius * 4 * (i % 10)), 0.0f - (radius * 4 * (i / 10))})
+            new Circle(20, radius, glm::vec2{-0.9f + (radius * 4 * (i % 20)), 0.9f - (radius * 4 * (i / 20))})
         );
     }
 
