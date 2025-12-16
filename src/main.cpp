@@ -20,7 +20,7 @@ int main()
     Scene scene;
 
     // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 500;
+    int num_particles = 400;
     float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {

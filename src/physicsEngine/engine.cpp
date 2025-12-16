@@ -65,10 +65,16 @@ void Engine::Update(Scene& scene, float dt)
         obj->position.y += obj->velocity.y * dt;
 
         HandleCollisions(obj);
+
     }
 
-    
+    //update the values in the particleDensityGradient object to store the density gradient at each particles position
+    CalculateDensityGradientAtParticles(scene);
+    ApplyPressureForceToParticles(scene, dt);
+
+    // update the values in the DensityField object to display the density in the background
     CalculateDensityField(scene);
+
 }
 
 
@@ -131,12 +137,35 @@ void Engine::CalculateDensityField(const Scene& scene)
     }
 }
 
-float Engine::CalculateDensityPosition(const Scene& scene, const glm::vec3& position)
+glm::vec2 Engine::CalculateDensityGradientPosition(const Scene& scene, const glm::vec3& position)
 {
-    float desnityValue = 0.0f;
-    float dist, dx, dy;
+    glm::vec2 densityGradient = {0.0f, 0.0f};
+    glm::vec2 r, direction;
+    float slope;
 
-    // for each particle, find its contribution at this position and add them up.
+    for (auto obj : scene.objects)
+    {
+        r = glm::vec2(position.x, position.y) - glm::vec2(obj->position.x, obj->position.y);
+
+        float dist = glm::length(r);
+
+        if (dist <= 0.0f || dist > kernelRadius) continue;
+
+        direction = r / dist;
+
+        slope = DensitySmoothingKernelDerivative(kernelRadius, dist);
+
+        densityGradient += (1) * slope * direction;
+    }
+
+    return densityGradient;
+}
+
+float Engine::CalculateDensityAtParticle(const Scene& scene, const glm::vec3& position)
+{
+    float densityValue = 0.0f;
+    float dx, dy, dist;
+
     for (auto obj : scene.objects)
     {
         dx = position.x - obj->position.x;
@@ -144,12 +173,51 @@ float Engine::CalculateDensityPosition(const Scene& scene, const glm::vec3& posi
         dist = std::sqrt(dx * dx + dy * dy);
 
         if (dist > kernelRadius) continue;
+
+        densityValue += DensitySmoothingKernel(kernelRadius, dist);
     }
 
-    desnityValue = DensitySmoothingKernel(kernelRadius, dist);
-
-    return desnityValue;
+    return densityValue;
 }
+
+void Engine::CalculateDensityGradientAtParticles(const Scene& scene)
+{
+    glm::vec2 densityGradient;
+
+    for (auto obj : scene.objects)
+    {
+        densityGradient = CalculateDensityGradientPosition(scene, obj->position);
+        particleDensityGradient[obj->objectId] = densityGradient;
+    }
+
+}
+
+
+void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)
+{
+    float accelerationX, accelerationY;
+    float constant = 0.00001f;
+
+    //f = m * a
+    // therefor the acceleration to apply to the particle a = f / m
+
+    for (auto obj : scene.objects)
+    {
+        // check if there is a density gradient entry for this particle
+        if (particleDensityGradient.find(obj->objectId) == particleDensityGradient.end())
+        {
+            continue;
+        }
+
+        accelerationX = (-1) * particleDensityGradient.at(obj->objectId).x / obj->mass;
+        accelerationY = (-1) * particleDensityGradient.at(obj->objectId).y / obj->mass;
+
+        // add this acceleration to the object velocity
+        obj->velocity.x += accelerationX * dt * constant;
+        obj->velocity.y += accelerationY * dt * constant;
+    }
+}
+
 
 float Engine::DensitySmoothingKernel(float radius, float dist)
 {
