@@ -13,14 +13,17 @@
 
 int main()
 {
-    Window* window = new Window("Test", 800, 600, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    Camera camera(800, 600);
+    int width = 2500;
+    int height = 400;
+
+    Window* window = new Window("Test", width, height, 0, SDL_WINDOWPOS_CENTERED);
+    Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);
     Engine* engine = new Engine(&camera);
     Scene scene;
 
     // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 400;
+    int num_particles = 600;
     float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {
@@ -44,6 +47,8 @@ int main()
         iter++;
 
         auto startTime = std::chrono::high_resolution_clock::now();
+
+        //SDL_Delay((Uint32)(1 * 1000.0f));
 
         while (window->PollEvents(event)) {
             if (event.type == SDL_QUIT)

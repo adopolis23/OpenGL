@@ -21,6 +21,7 @@ void Engine::HandleCollisions(PhysicsObject* obj)
     // left side of object contacts left wall
     if (obj->position.x - obj->radius < camera->left_world_bound && obj->velocity.x < 0)
     {
+        obj->position.x = camera->left_world_bound + obj->radius;
         obj->velocity.x *= -1;
         collision = true;
     }
@@ -28,6 +29,7 @@ void Engine::HandleCollisions(PhysicsObject* obj)
     // right side of object contacts right wall
     if (obj->position.x + obj->radius > camera->right_world_bound && obj->velocity.x > 0)
     {
+        obj->position.x = camera->right_world_bound - obj->radius;
         obj->velocity.x *= -1;
         collision = true;
     }
@@ -35,6 +37,7 @@ void Engine::HandleCollisions(PhysicsObject* obj)
     // top of object contacts top wall
     if (obj->position.y + obj->radius > camera->top_world_bound && obj->velocity.y > 0)
     {
+        obj->position.y = camera->top_world_bound - obj->radius;
         obj->velocity.y *= -1;
         collision = true;
     }
@@ -42,6 +45,7 @@ void Engine::HandleCollisions(PhysicsObject* obj)
     // bottom of object contacs bottom wall
     if (obj->position.y - obj->radius < camera->bottom_world_bound && obj->velocity.y < 0)
     {
+        obj->position.y = camera->bottom_world_bound + obj->radius;
         obj->velocity.y *= -1;
         collision = true;
     }
@@ -58,14 +62,14 @@ void Engine::HandleCollisions(PhysicsObject* obj)
 void Engine::Update(Scene& scene, float dt)
 {
 
-    // add velocities to each particles position
     for (auto obj : scene.objects)
     {
+        // add velocities to each particles position
         obj->position.x += obj->velocity.x * dt;
         obj->position.y += obj->velocity.y * dt;
 
+        // handle collisions for that object
         HandleCollisions(obj);
-
     }
 
     //update the values in the particleDensityGradient object to store the density gradient at each particles position
