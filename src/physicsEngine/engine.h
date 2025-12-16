@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "globals.h"
 #include "scene.h"
 #include "renderer/camera.h"
 

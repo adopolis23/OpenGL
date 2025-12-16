@@ -3,3 +3,9 @@ bin-int
 Makefile
 .make
 *.make
+.vs
+*.sln
+*.vcxproj
+*.filters
+*.user
+*.exe

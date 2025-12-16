@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,12 +12,12 @@
 #include "renderer/camera.h"
 #include "physicsEngine/engine.h"
 
-int main()
+int main(int argc, char** argv)
 {
     int width = 2500;
     int height = 400;
 
-    Window* window = new Window("Test", width, height, 0, SDL_WINDOWPOS_CENTERED);
+    Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
     Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);
     Engine* engine = new Engine(&camera);

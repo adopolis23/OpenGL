@@ -25,14 +25,16 @@ project "ParticleSimulation"
         "src/physicsEngine",
         "libs/glad/include",
         "/usr/include",
+        "E:/dev/vcpkg/installed/x64-windows/include"
     }
 
-    links {
-        "SDL2",
-        "GL",
-        "dl",
-        "pthread"
-    }
+    libdirs { "E:/dev/vcpkg/installed/x64-windows/lib" }
+
+    filter "system:linux"
+        links { "SDL2", "GL", "dl", "pthread" }
+
+    filter "system:windows"
+        links { "SDL2", "opengl32" }
 
     filter "configurations:Debug"
         defines { "DEBUG" }

@@ -1,5 +1,6 @@
 #include "circle.h"
 #include <iostream>
+#include "globals.h"
 
 void Circle::GenerateVerticies()
 {
