@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {
-        scene.objects.push_back(
+        scene.AddObjectToScene (
             // this math just makes a 2d array of objects added to the scene
             new Circle(20, radius, glm::vec2{-0.9f + (radius * 4 * (i % 20)), 0.9f - (radius * 4 * (i / 20))})
         );

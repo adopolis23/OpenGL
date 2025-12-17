@@ -7,7 +7,7 @@ void Renderer::Render(const Scene& scene)
 
     RenderDensityBackground();
 
-    for (auto obj : scene.objects) 
+    for (const auto& [id, obj] : scene.objects) 
     {
 
         // bind the default shader for now every time

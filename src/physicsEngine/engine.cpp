@@ -62,7 +62,7 @@ void Engine::HandleCollisions(PhysicsObject* obj)
 void Engine::Update(Scene& scene, float dt)
 {
 
-    for (auto obj : scene.objects)
+    for (auto& [id, obj] : scene.objects)
     {
         // add velocities to each particles position
         obj->position.x += obj->velocity.x * dt;
@@ -94,7 +94,7 @@ void Engine::CalculateDensityField(const Scene& scene)
     int kernelCellsX = int(std::ceil(kernelRadius / densityField.cellSizeX));
     int kernelCellsY = int(std::ceil(kernelRadius / densityField.cellSizeY));
 
-    for (auto obj : scene.objects)
+    for (const auto& [id, obj] : scene.objects)
     {
 
         //convert particle world locations to [0-1] range
@@ -147,7 +147,7 @@ glm::vec2 Engine::CalculateDensityGradientPosition(const Scene& scene, const glm
     glm::vec2 r, direction;
     float slope;
 
-    for (auto obj : scene.objects)
+    for (const auto& [id, obj] : scene.objects)
     {
         r = glm::vec2(position.x, position.y) - glm::vec2(obj->position.x, obj->position.y);
 
@@ -170,7 +170,7 @@ float Engine::CalculateDensityAtParticle(const Scene& scene, const glm::vec3& po
     float densityValue = 0.0f;
     float dx, dy, dist;
 
-    for (auto obj : scene.objects)
+    for (const auto& [id, obj] : scene.objects)
     {
         dx = position.x - obj->position.x;
         dy = position.y - obj->position.y;
@@ -188,7 +188,7 @@ void Engine::CalculateDensityGradientAtParticles(const Scene& scene)
 {
     glm::vec2 densityGradient;
 
-    for (auto obj : scene.objects)
+    for (const auto& [id, obj] : scene.objects)
     {
         densityGradient = CalculateDensityGradientPosition(scene, obj->position);
         particleDensityGradient[obj->objectId] = densityGradient;
@@ -205,7 +205,7 @@ void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)
     //f = m * a
     // therefor the acceleration to apply to the particle a = f / m
 
-    for (auto obj : scene.objects)
+    for (auto& [id, obj] : scene.objects)
     {
         // check if there is a density gradient entry for this particle
         if (particleDensityGradient.find(obj->objectId) == particleDensityGradient.end())
