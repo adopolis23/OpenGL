@@ -141,14 +141,18 @@ void Engine::CalculateDensityField(const Scene& scene)
     }
 }
 
-glm::vec2 Engine::CalculateDensityGradientPosition(const Scene& scene, const glm::vec3& position)
+glm::vec2 Engine::CalculateDensityGradientPosition(const Scene& scene, int objectId)
 {
     glm::vec2 densityGradient = {0.0f, 0.0f};
     glm::vec2 r, direction;
     float slope;
 
+    glm::vec3 position = scene.objects.at(objectId)->position; 
+
     for (const auto& [id, obj] : scene.objects)
     {
+        if (id == objectId) continue;
+
         r = glm::vec2(position.x, position.y) - glm::vec2(obj->position.x, obj->position.y);
 
         float dist = glm::length(r);
@@ -190,7 +194,7 @@ void Engine::CalculateDensityGradientAtParticles(const Scene& scene)
 
     for (const auto& [id, obj] : scene.objects)
     {
-        densityGradient = CalculateDensityGradientPosition(scene, obj->position);
+        densityGradient = CalculateDensityGradientPosition(scene, obj->objectId);
         particleDensityGradient[obj->objectId] = densityGradient;
     }
 

@@ -60,7 +60,7 @@ public:
     float DensitySmoothingKernel(float radius, float dist);
     float DensitySmoothingKernelDerivative(float radius, float dist);
     void CalculateDensityField(const Scene& scene);
-    glm::vec2 CalculateDensityGradientPosition(const Scene& scene, const glm::vec3& position);
+    glm::vec2 CalculateDensityGradientPosition(const Scene& scene, int objectId);
     float CalculateDensityAtParticle(const Scene& scene, const glm::vec3& position);
     void CalculateDensityGradientAtParticles(const Scene& scene);
     float kernelRadius = 0.4f;

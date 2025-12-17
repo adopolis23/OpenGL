@@ -12,10 +12,24 @@
 #include "renderer/camera.h"
 #include "physicsEngine/engine.h"
 
+void InitScene(Scene& scene)
+{
+    // adds the particles to the simulation, might move to some function in scene maybe?
+    int num_particles = 200;
+    float radius = 0.01f;
+    for (int i = 0; i < num_particles; i++)
+    {
+        scene.AddObjectToScene(
+            // this math just makes a 2d array of objects added to the scene
+            new Circle(20, radius, glm::vec2{ -0.9f + (radius * 4 * (i % 20)), 0.9f - (radius * 4 * (i / 20)) })
+        );
+    }
+}
+
 int main(int argc, char** argv)
 {
-    int width = 2500;
-    int height = 400;
+    int width = 1000;
+    int height = 800;
 
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
     Camera camera(width, height);
@@ -23,17 +37,8 @@ int main(int argc, char** argv)
     Engine* engine = new Engine(&camera);
     Scene scene;
 
-    // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 600;
-    float radius = 0.01f;
-    for (int i = 0; i < num_particles; i++)
-    {
-        scene.AddObjectToScene (
-            // this math just makes a 2d array of objects added to the scene
-            new Circle(20, radius, glm::vec2{-0.9f + (radius * 4 * (i % 20)), 0.9f - (radius * 4 * (i / 20))})
-        );
-    }
-
+    
+    InitScene(scene);
 
 
     bool running = true;
@@ -47,9 +52,10 @@ int main(int argc, char** argv)
     while (running) {
         iter++;
 
+        //SDL_Delay((Uint32)(0.1 * 1000.0f));
+
         auto startTime = std::chrono::high_resolution_clock::now();
 
-        //SDL_Delay((Uint32)(1 * 1000.0f));
 
         while (window->PollEvents(event)) {
             if (event.type == SDL_QUIT)
