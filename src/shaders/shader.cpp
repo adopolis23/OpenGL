@@ -59,6 +59,20 @@ void Shader::setInt(const std::string& name, int value)
     glUniform1i(loc, value);
 }
 
+void Shader::setFloat(const std::string& name, float value)
+{
+    GLint loc = glGetUniformLocation(id, name.c_str());
+    glUniform1f(loc, value);
+}
+
+void Shader::setVec2(const std::string& name, const glm::vec2& v)
+{
+    GLint loc = glGetUniformLocation(id, name.c_str());
+    glUniform2f(loc, v.x, v.y);
+}
+
+
+
 
 // loads shader from file, maybe this should be a general util function for loading strings from files..
 std::string Shader::LoadShaderFromFile(const std::string& path)

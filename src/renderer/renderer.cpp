@@ -7,22 +7,22 @@ void Renderer::Render(const Scene& scene)
 
     RenderDensityBackground();
 
-    for (const auto& [id, obj] : scene.objects) 
-    {
+    //for (const auto& [id, obj] : scene.objects) 
+    //{
 
-        // bind the default shader for now every time
-        defaultShader->bind();
+    //    // bind the default shader for now every time
+    //    defaultShader->bind();
 
-        obj->GenerateObjectModel();
-        // model comes from the object and has all of the transformation data
-        defaultShader->setMat4("model", obj->model);
-        // view and projection come from the renderer and have all of the aspect information
-        defaultShader->setMat4("view", view);
-        defaultShader->setMat4("projection", camera->projection);
+    //    obj->GenerateObjectModel();
+    //    // model comes from the object and has all of the transformation data
+    //    defaultShader->setMat4("model", obj->model);
+    //    // view and projection come from the renderer and have all of the aspect information
+    //    defaultShader->setMat4("view", view);
+    //    defaultShader->setMat4("projection", camera->projection);
 
-        glBindVertexArray(obj->vao);
-        glDrawArrays(GL_TRIANGLES, 0, obj->VertexCount);
-    }
+    //    glBindVertexArray(obj->vao);
+    //    glDrawArrays(GL_TRIANGLES, 0, obj->VertexCount);
+    //}
 
 }
 
@@ -64,6 +64,8 @@ void Renderer::InitDensityResources(const DensityField& densityField)
         GL_FLOAT,
         nullptr   // IMPORTANT: no data yet
     );
+
+    glGenBuffers(1, &particleSSBO);
 }
 
 void Renderer::UploadDensity(const DensityField& densityField)
@@ -82,15 +84,47 @@ void Renderer::UploadDensity(const DensityField& densityField)
     );
 }
 
+void Renderer::UploadParticlePositions(const Scene& scene, float kernelRadius)
+{
+    gpuKernelRadius = kernelRadius;
+
+    //clear data from previous render
+    gpuParticlePositions.clear();
+
+    for (auto& [id, obj] : scene.objects)
+    {
+        gpuParticlePositions.push_back(glm::vec2(obj->position));
+    }
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, particleSSBO);
+    glBufferData(
+        GL_SHADER_STORAGE_BUFFER,
+        gpuParticlePositions.size() * sizeof(glm::vec2),
+        gpuParticlePositions.data(),
+        GL_DYNAMIC_DRAW
+    );
+}
+
 void Renderer::RenderDensityBackground()
 {
     // need to get the object and bind the correct shader and texture
 
     densityShader->bind();
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, densityTexture);
-    densityShader->setInt("uDensity", 0);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, densityTexture);
+    //densityShader->setInt("uDensity", 0);
+
+    //glBindVertexArray(densityBackground->vao);
+    //glDrawArrays(GL_TRIANGLES, 0, densityBackground->VertexCount);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, particleSSBO);
+
+    densityShader->setInt("particleCount", gpuParticlePositions.size());
+    densityShader->setFloat("kernelRadius", gpuKernelRadius);
+
+    densityShader->setVec2("worldMin", glm::vec2(camera->left_world_bound, camera->bottom_world_bound));
+    densityShader->setVec2("worldMax", glm::vec2(camera->right_world_bound, camera->top_world_bound));
 
     glBindVertexArray(densityBackground->vao);
     glDrawArrays(GL_TRIANGLES, 0, densityBackground->VertexCount);

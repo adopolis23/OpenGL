@@ -77,7 +77,7 @@ void Engine::Update(Scene& scene, float dt)
     ApplyPressureForceToParticles(scene, dt);
 
     // update the values in the DensityField object to display the density in the background
-    CalculateDensityField(scene);
+    //CalculateDensityField(scene);
 
 }
 
@@ -141,7 +141,7 @@ void Engine::CalculateDensityField(const Scene& scene)
     }
 }
 
-glm::vec2 Engine::CalculateDensityGradientPosition(const Scene& scene, int objectId)
+glm::vec2 Engine::CalculateDensityGradientAtPosition(const Scene& scene, int objectId)
 {
     glm::vec2 densityGradient = {0.0f, 0.0f};
     glm::vec2 r, direction;
@@ -194,7 +194,7 @@ void Engine::CalculateDensityGradientAtParticles(const Scene& scene)
 
     for (const auto& [id, obj] : scene.objects)
     {
-        densityGradient = CalculateDensityGradientPosition(scene, obj->objectId);
+        densityGradient = CalculateDensityGradientAtPosition(scene, obj->objectId);
         particleDensityGradient[obj->objectId] = densityGradient;
     }
 

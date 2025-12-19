@@ -45,8 +45,9 @@ public:
     // stores particle ids and the (most recent) density gradient at their position
     std::unordered_map<int, glm::vec2> particleDensityGradient;
     
+    float kernelRadius = 0.4f;
     
-    private:
+private:
     
     void HandleCollisions(PhysicsObject* obj);
     float collisionDampingFactor = 0.95f;
@@ -54,16 +55,14 @@ public:
     // pointer to the global camera for this scene
     const Camera* camera;
     
-    // todo: might want to move all the density stuff to seperate file sometime
     // radius: radius of the influence of the kernel
     // dist: distnace from the center you want to calculate influence
     float DensitySmoothingKernel(float radius, float dist);
     float DensitySmoothingKernelDerivative(float radius, float dist);
     void CalculateDensityField(const Scene& scene);
-    glm::vec2 CalculateDensityGradientPosition(const Scene& scene, int objectId);
+    glm::vec2 CalculateDensityGradientAtPosition(const Scene& scene, int objectId);
     float CalculateDensityAtParticle(const Scene& scene, const glm::vec3& position);
     void CalculateDensityGradientAtParticles(const Scene& scene);
-    float kernelRadius = 0.4f;
 
     void ApplyPressureForceToParticles(Scene& scene, float dt);
 

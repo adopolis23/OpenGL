@@ -21,6 +21,8 @@ public:
     
     // upload the density field data to gpu
     void UploadDensity(const DensityField& densityField);
+
+    void UploadParticlePositions(const Scene& scene, float kernelRadius);
     
     // render density field background
     void RenderDensityBackground();
@@ -38,5 +40,9 @@ private:
     GLuint densityTexture; 
     Shader* densityShader;
     DensityBackground* densityBackground;
+
+    GLuint particleSSBO;
+    std::vector<glm::vec2> gpuParticlePositions;
+    float gpuKernelRadius;
 
 };

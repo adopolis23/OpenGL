@@ -1,17 +1,47 @@
-#version 330 core
+﻿#version 430 core
 
 in vec2 vUV;
-uniform sampler2D uDensity;
-
 out vec4 FragColor;
+
+uniform int particleCount;
+uniform float kernelRadius;
+
+uniform vec2 worldMin; // (left, bottom)
+uniform vec2 worldMax; // (right, top)
+
+layout(std430, binding = 0) buffer Particles {
+    vec2 positions[];
+};
+
+float kernel(float r, float d)
+{
+    //if (d >= r) return 0.0;
+    //float x = r*r - d*d;
+    //return x*x*x;
+
+    float volume = (3.14159265358 * r * r * r * r * r * r * r * r / 4);
+
+    float value = (r * r) - (d * d);
+    value = (value > 0) ? value : 0;
+
+    return ((value * value * value) / volume);
+}
 
 void main()
 {
+    vec2 worldPos = mix(worldMin, worldMax, vUV);
+    float density = 0.0;
+    
     // damps the effect of all density function, tunable.
-    float damper_constant = 0.02;
+    float damper_constant = 0.03;
 
-    float d = texture(uDensity, vUV).r;
-    d *= damper_constant;
-    d = clamp(d, 0.0, 1.0);
-    FragColor = vec4(d, 0.0, d, 1.0);
+    for (int i = 0; i < particleCount; ++i)
+    {
+        float d = distance(worldPos, positions[i]);
+        if (d > kernelRadius) continue;
+        density += (kernel(kernelRadius, d) * damper_constant);
+    }
+
+    density = (density > 1.0f ? 1.0f : density);
+    FragColor = vec4(density, 0.0f, (1.0f-density), 1.0);
 }
