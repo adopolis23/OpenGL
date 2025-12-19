@@ -45,7 +45,7 @@ public:
     // stores particle ids and the (most recent) density gradient at their position
     std::unordered_map<int, glm::vec2> particleDensityGradient;
     
-    float kernelRadius = 0.5f;
+    float kernelRadius = 0.4f;
     
 private:
     
@@ -68,7 +68,8 @@ private:
 
 
     //index into this vector is the particle id/number the value is the hash for which quad its in
-    std::vector<int> objectid_to_quad;
+    std::vector<int> objectid_to_quadid; // [particleID] -> quadID
+    std::vector<std::vector<int>> quadid_to_objectids;      // [quadID] -> particle IDs
     int quadWidth;
     int quadHeight;
 
@@ -76,5 +77,11 @@ private:
     float quadSize;
 
     //update the quad for some object id in objectid_to_quad
-    void UpdateQuadLocation(int objectId, const glm::vec2 position);
+    void UpdateQuadLocation(int objectId, const glm::vec3 position);
+
+    //get the id of the quad some position belongs to.
+    int GetQuadIdFromPosition(const glm::vec3 position);
+
+    // hash the x and y location of a quad into a single id
+    int HashQuadLocation(int x_loc, int y_loc);
 };

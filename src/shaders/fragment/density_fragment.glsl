@@ -15,10 +15,6 @@ layout(std430, binding = 0) buffer Particles {
 
 float kernel(float r, float d)
 {
-    //if (d >= r) return 0.0;
-    //float x = r*r - d*d;
-    //return x*x*x;
-
     float volume = (3.14159265358 * r * r * r * r * r * r * r * r / 4);
 
     float value = (r * r) - (d * d);

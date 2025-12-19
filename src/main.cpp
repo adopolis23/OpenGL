@@ -15,7 +15,7 @@
 void InitScene(Scene& scene)
 {
     // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 1;
+    int num_particles = 550;
     float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {
@@ -35,10 +35,11 @@ int main(int argc, char** argv)
     Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);
     Scene scene;
+    InitScene(scene);
+
     Engine* engine = new Engine(&camera, scene);
 
     
-    InitScene(scene);
 
 
     bool running = true;

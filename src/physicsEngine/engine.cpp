@@ -19,16 +19,45 @@ Engine::Engine(const Camera* cam, const Scene& scene)
     quadWidth = static_cast<int>(std::ceil(camera->world_width / quadSize));
     quadHeight = static_cast<int>(std::ceil(camera->world_height / quadSize));
 
-    objectid_to_quad.reserve(scene.objectCount);
+    objectid_to_quadid.resize(scene.objectCount + 1);
+    quadid_to_objectids.resize(quadWidth * quadHeight);
+
+    // this might be overkill but to avoid resizing during execution reserve space for all particles in each quad up front
+    for (auto& quad : quadid_to_objectids)
+    {
+        quad.reserve(scene.objectCount);
+    }
 
 }
 
 
-void Engine::UpdateQuadLocation(int objectId, const glm::vec2 position)
+int Engine::HashQuadLocation(int x_loc, int y_loc)
 {
-    // find which quad this object would be in
-    int x_quad_loc = (position.x-camera->left_world_bound)/quadSize;
-    int y_quad_loc = (position.y-camera->bottom_world_bound)/quadSize;
+    //may need to chose different primes
+    return (x_loc * 3) + (y_loc * 7) + 1;
+}
+
+int Engine::GetQuadIdFromPosition(const glm::vec3 position)
+{
+    int x = static_cast<int>((position.x - camera->left_world_bound) / quadSize);
+    int y = static_cast<int>((position.y - camera->bottom_world_bound) / quadSize);
+
+    x = std::clamp(x, 0, quadWidth - 1);
+    y = std::clamp(y, 0, quadHeight - 1);
+
+    return y * quadWidth + x;
+}
+
+void Engine::UpdateQuadLocation(int objectId, const glm::vec3 position)
+{
+    int quad_id = GetQuadIdFromPosition(position);
+
+    //update quad for this particles id
+    objectid_to_quadid[objectId] = quad_id;
+
+    // this structure must be cleared before objects start getting pushed for this render call
+    quadid_to_objectids.at(quad_id).push_back(objectId);
+
 }
 
 
@@ -82,6 +111,16 @@ void Engine::HandleCollisions(PhysicsObject* obj)
 void Engine::Update(Scene& scene, float dt)
 {
 
+    // clear the current record of which quads each particle is in
+    for (auto& q : quadid_to_objectids)
+        q.clear();
+
+    for (auto& [id, obj] : scene.objects)
+    {
+        UpdateQuadLocation(id, obj->position);
+    }
+
+
     for (auto& [id, obj] : scene.objects)
     {
         // add velocities to each particles position
@@ -90,6 +129,7 @@ void Engine::Update(Scene& scene, float dt)
 
         // handle collisions for that object
         HandleCollisions(obj);
+
     }
 
     //update the values in the particleDensityGradient object to store the density gradient at each particles position
@@ -165,25 +205,48 @@ glm::vec2 Engine::CalculateDensityGradientAtPosition(const Scene& scene, int obj
 {
     glm::vec2 densityGradient = {0.0f, 0.0f};
     glm::vec2 r, direction;
-    float slope;
+    float slope, dist;
 
     glm::vec3 position = scene.objects.at(objectId)->position; 
 
-    for (const auto& [id, obj] : scene.objects)
+
+    // get the quad id of this object
+    int quadId = GetQuadIdFromPosition(position);
+
+    int quadId_x = quadId % quadWidth;
+    int quadId_y = quadId / quadWidth;
+    
+
+    for (int dy = -1; dy <= 1; ++dy)
     {
-        if (id == objectId) continue;
+        for (int dx = -1; dx <= 1; ++dx)
+        {
+            //if (dx == 0 && dy == 0) continue;
 
-        r = glm::vec2(position.x, position.y) - glm::vec2(obj->position.x, obj->position.y);
+            int nx = quadId_x + dx;
+            int ny = quadId_y + dy;
 
-        float dist = glm::length(r);
+            if (nx < 0 || ny < 0 || nx >= quadWidth || ny >= quadHeight)
+                continue;
 
-        if (dist <= 0.0f || dist > kernelRadius) continue;
+            int neighborQuad = ny * quadWidth + nx;
 
-        direction = r / dist;
+            for (int id : quadid_to_objectids.at(neighborQuad))
+            {
+                if (id == objectId) continue;
 
-        slope = DensitySmoothingKernelDerivative(kernelRadius, dist);
+                r = glm::vec2(position.x, position.y) - glm::vec2(scene.objects.at(id)->position.x, scene.objects.at(id)->position.y);
+                dist = glm::length(r);
+                
+                if (dist < 1e-6f) continue; // check for extreamly small distances to prevent nan corruption apparently?
 
-        densityGradient += (1) * slope * direction;
+                direction = r / dist;
+
+                slope = DensitySmoothingKernelDerivative(kernelRadius, dist);
+
+                densityGradient += (1) * slope * direction;
+            }
+        }
     }
 
     return densityGradient;
