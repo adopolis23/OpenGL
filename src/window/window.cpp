@@ -47,7 +47,7 @@ int Window::initialize_window()
 
     printf("GL Functions Loaded With GLAD\n");
 
-    SDL_GL_SetSwapInterval(1); // vsync
+    SDL_GL_SetSwapInterval(0); // vsync
 
 
     return EXIT_SUCCESS;

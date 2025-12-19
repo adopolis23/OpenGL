@@ -11,6 +11,8 @@ Camera::Camera(int width, int height)
     world_height = 2.0f;
     world_width = world_height * aspect_ratio;
 
+    printf("World height: %f  World Width: %f\n", world_height, world_width);
+
     left_world_bound = -world_width * 0.5f;
     right_world_bound = world_width * 0.5f;
     top_world_bound = world_height * 0.5f;

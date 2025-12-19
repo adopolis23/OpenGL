@@ -34,7 +34,7 @@ class Engine
 public:
 
     // engine needs a ref to the camera to compute collisions and effects with the walls
-    Engine(const Camera* cam);
+    Engine(const Camera* cam, const Scene& scene);
 
     
     // takes a physics step for objects in a scene. scaled by the time that has passed between draws `dt`
@@ -45,7 +45,7 @@ public:
     // stores particle ids and the (most recent) density gradient at their position
     std::unordered_map<int, glm::vec2> particleDensityGradient;
     
-    float kernelRadius = 0.4f;
+    float kernelRadius = 0.5f;
     
 private:
     
@@ -66,4 +66,15 @@ private:
 
     void ApplyPressureForceToParticles(Scene& scene, float dt);
 
+
+    //index into this vector is the particle id/number the value is the hash for which quad its in
+    std::vector<int> objectid_to_quad;
+    int quadWidth;
+    int quadHeight;
+
+    //size of the actual quads in world units. Going to be 2 * kernel radius
+    float quadSize;
+
+    //update the quad for some object id in objectid_to_quad
+    void UpdateQuadLocation(int objectId, const glm::vec2 position);
 };

@@ -1,16 +1,34 @@
 #include "engine.h"
 
 
-Engine::Engine(const Camera* cam)
+Engine::Engine(const Camera* cam, const Scene& scene)
 {
     camera = cam;
 
-    //set up the density field
+    //set up the density field (not used anymore)
     densityField.width = 100;
     densityField.height = 100;
     densityField.cellSizeX = cam->world_width / (float)densityField.width;
     densityField.cellSizeY = cam->world_height / (float)densityField.height;
     densityField.density.resize(densityField.width * densityField.height);
+
+
+    // h and w of each cell
+    quadSize = 2 * kernelRadius;
+
+    quadWidth = static_cast<int>(std::ceil(camera->world_width / quadSize));
+    quadHeight = static_cast<int>(std::ceil(camera->world_height / quadSize));
+
+    objectid_to_quad.reserve(scene.objectCount);
+
+}
+
+
+void Engine::UpdateQuadLocation(int objectId, const glm::vec2 position)
+{
+    // find which quad this object would be in
+    int x_quad_loc = (position.x-camera->left_world_bound)/quadSize;
+    int y_quad_loc = (position.y-camera->bottom_world_bound)/quadSize;
 }
 
 
@@ -55,6 +73,8 @@ void Engine::HandleCollisions(PhysicsObject* obj)
     {
         obj->velocity *= collisionDampingFactor;
     }
+
+    UpdateQuadLocation(obj->objectId, obj->position);
 }
 
 
