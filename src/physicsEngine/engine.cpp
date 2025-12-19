@@ -206,6 +206,8 @@ void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)
     float accelerationX, accelerationY;
     float constant = 0.00001f;
 
+    float max_velocity = 0.003f;
+
     //f = m * a
     // therefor the acceleration to apply to the particle a = f / m
 
@@ -223,6 +225,26 @@ void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)
         // add this acceleration to the object velocity
         obj->velocity.x += accelerationX * dt * constant;
         obj->velocity.y += accelerationY * dt * constant;
+        
+        if (obj->velocity.x > max_velocity)
+        {
+            obj->velocity.x = max_velocity;
+        }
+
+        if (obj->velocity.x < (-1) * max_velocity)
+        {
+            obj->velocity.x = (-1) * max_velocity;
+        }
+
+        if (obj->velocity.y > max_velocity)
+        {
+            obj->velocity.y = max_velocity;
+        }
+
+        if (obj->velocity.y < (-1) * max_velocity)
+        {
+            obj->velocity.y = (-1) * max_velocity;
+        }
     }
 }
 

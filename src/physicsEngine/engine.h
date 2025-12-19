@@ -50,7 +50,7 @@ public:
 private:
     
     void HandleCollisions(PhysicsObject* obj);
-    float collisionDampingFactor = 0.95f;
+    float collisionDampingFactor = 0.90f;
     
     // pointer to the global camera for this scene
     const Camera* camera;

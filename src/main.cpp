@@ -21,7 +21,7 @@ void InitScene(Scene& scene)
     {
         scene.AddObjectToScene(
             // this math just makes a 2d array of objects added to the scene
-            new Circle(20, radius, glm::vec2{ -0.9f + (radius * 4 * (i % 20)), 0.9f - (radius * 4 * (i / 20)) })
+            new Circle(20, radius, glm::vec2{ -0.9f + (radius * (i % 20)), 0.9f - (radius * (i / 20)) })
         );
     }
 }
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);
     Engine* engine = new Engine(&camera);
-    Scene scene;
+    Scene scene(&camera);
 
     
     InitScene(scene);
