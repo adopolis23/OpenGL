@@ -103,7 +103,6 @@ void Engine::HandleCollisions(PhysicsObject* obj)
         obj->velocity *= collisionDampingFactor;
     }
 
-    UpdateQuadLocation(obj->objectId, obj->position);
 }
 
 

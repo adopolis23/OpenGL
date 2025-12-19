@@ -45,7 +45,7 @@ public:
     // stores particle ids and the (most recent) density gradient at their position
     std::unordered_map<int, glm::vec2> particleDensityGradient;
     
-    float kernelRadius = 0.4f;
+    float kernelRadius = 0.3f;
     
 private:
     
