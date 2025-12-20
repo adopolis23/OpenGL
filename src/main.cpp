@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     SDL_Event event;
     double dt = 0.0f;
 
-    renderer->InitDensityResources(engine->densityField);
+    renderer->InitDensityResources(engine->densitySystem.densityField);
 
     long iter = 0;
 
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 
         engine->Update(scene, dt);
         //renderer->UploadDensity(engine->densityField);
-        renderer->UploadParticlePositions(scene, engine->kernelRadius);
+        renderer->UploadParticlePositions(scene, engine->densitySystem.kernelRadius);
         renderer->Render(scene);
         window->SwapBuffers();
 
