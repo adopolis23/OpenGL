@@ -7,22 +7,22 @@ void Renderer::Render(const Scene& scene)
 
     RenderDensityBackground();
 
-    //for (const auto& [id, obj] : scene.objects) 
-    //{
+    for (const auto& [id, obj] : scene.objects) 
+    {
 
-    //   // bind the default shader for now every time
-    //   defaultShader->bind();
+       // bind the default shader for now every time
+       defaultShader->bind();
 
-    //   obj->GenerateObjectModel();
-    //   // model comes from the object and has all of the transformation data
-    //   defaultShader->setMat4("model", obj->model);
-    //   // view and projection come from the renderer and have all of the aspect information
-    //   defaultShader->setMat4("view", view);
-    //   defaultShader->setMat4("projection", camera->projection);
+       obj->GenerateObjectModel();
+       // model comes from the object and has all of the transformation data
+       defaultShader->setMat4("model", obj->model);
+       // view and projection come from the renderer and have all of the aspect information
+       defaultShader->setMat4("view", view);
+       defaultShader->setMat4("projection", camera->projection);
 
-    //   glBindVertexArray(obj->vao);
-    //   glDrawArrays(GL_TRIANGLES, 0, obj->VertexCount);
-    //}
+       glBindVertexArray(obj->vao);
+       glDrawArrays(GL_TRIANGLES, 0, obj->VertexCount);
+    }
 
 }
 

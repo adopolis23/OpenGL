@@ -29,7 +29,7 @@ void main()
     float density = 0.0;
     
     // damps the effect of all density function, tunable.
-    float damper_constant = 0.03;
+    float damper_constant = 0.01;
 
     for (int i = 0; i < particleCount; ++i)
     {

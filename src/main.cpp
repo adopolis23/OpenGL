@@ -15,7 +15,7 @@
 void InitScene(Scene& scene)
 {
     // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 600;
+    int num_particles = 1000;
     float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {
@@ -29,7 +29,7 @@ void InitScene(Scene& scene)
 int main(int argc, char** argv)
 {
     int width = 2500;
-    int height = 500;
+    int height = 600;
 
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
     Camera camera(width, height);

@@ -56,12 +56,24 @@ void Engine::HandleCollisions(PhysicsObject* obj)
 }
 
 
+void Engine::ApplyGravity(Scene& scene)
+{
+    float accel_gravity = 0.00003f;
+
+    for (auto& [id, obj] : scene.objects)
+    {
+        obj->velocity.y += (-1) * accel_gravity;
+    }
+}
+
+
 
 void Engine::Update(Scene& scene, float dt)
 {
 
     spatialGrid.UpdateQuadLocations(scene);
 
+    //ApplyGravity(scene);
 
     for (auto& [id, obj] : scene.objects)
     {

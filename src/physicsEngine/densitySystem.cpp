@@ -29,10 +29,14 @@ float DensitySystem::DensitySmoothingKernel(float radius, float dist)
 
 float DensitySystem::DensitySmoothingKernelDerivative(float radius, float dist)
 {
-    if (dist > radius) return 0.0;
+    if (dist > radius) return 0.0f;
 
-    float value = (radius * radius) - (dist * dist);
-    float scale = -24 / (M_PI * pow(radius, 8));
+    float r2 = radius * radius;
+    float value = r2 - (dist * dist);
+
+    const float inv_r8 = 1.0f / (r2 * r2 * r2 * r2); // r^8
+    const float scale = -24.0f * inv_r8 * (1.0f / M_PI);
+
     return scale * dist * value * value;
 }
 
@@ -106,6 +110,7 @@ glm::vec2 DensitySystem::CalculateDensityGradientAtPosition(const Scene& scene, 
     float slope, dist;
 
     glm::vec3 position = scene.objects.at(objectId)->position;
+    glm::vec3 otherObjectPostion;
 
 
     // get the quad id of this object
@@ -133,7 +138,7 @@ glm::vec2 DensitySystem::CalculateDensityGradientAtPosition(const Scene& scene, 
             {
                 if (id == objectId) continue;
 
-                r = glm::vec2(position.x, position.y) - glm::vec2(scene.objects.at(id)->position.x, scene.objects.at(id)->position.y);
+                r = position - scene.objects.at(id)->position;
                 dist = glm::length(r);
 
                 if (dist < 1e-6f) continue; // check for extreamly small distances to prevent nan corruption apparently?

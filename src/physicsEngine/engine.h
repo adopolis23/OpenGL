@@ -31,8 +31,9 @@ public:
     
 private:
     
+    void ApplyGravity(Scene& scene);
     void HandleCollisions(PhysicsObject* obj);
-    float collisionDampingFactor = 0.90f;
+    float collisionDampingFactor = 0.80f;
     
     // pointer to the global camera for this scene
     const Camera* camera;
