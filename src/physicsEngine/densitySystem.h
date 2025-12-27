@@ -42,6 +42,16 @@ public:
     // radius of the density smoothing kernel; also used to compute how many quads are on the screen
     float kernelRadius = 0.3f;
 
+    // per-particle scalar density
+    std::unordered_map<int, float> particleDensity;
+
+    // per-particle computed pressure force (vector)
+    std::unordered_map<int, glm::vec2> particlePressureForce;
+
+    float restDensity = 1.0f;
+    float stiffness = 1.0f;    // pressure constant
+    float viscosity = 0.02f;   // small stabilizing viscosity
+
 private:
     
     // radius: radius of the influence of the kernel
@@ -60,6 +70,8 @@ private:
     // calculates the actual density value at some position; TODO: might change name
     float CalculateDensityAtParticle(const Scene& scene, const glm::vec3& position);
     
+
+    void CalculatePressureForParticles(const Scene& scene);
 
 
     // reference to the worlds camera
