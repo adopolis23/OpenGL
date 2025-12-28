@@ -6,6 +6,7 @@
 #include <chrono>
 
 #include "window/window.h"
+#include "window/InputManager.h"
 #include "renderer/renderer.h"
 #include "scene/circle.h"
 #include "shaders/shader.h"
@@ -37,6 +38,7 @@ int main(int argc, char** argv)
     Scene scene;
     InitScene(scene);
 
+	InputManager inputManager;
     Engine* engine = new Engine(&camera, scene);
 
     
@@ -49,19 +51,32 @@ int main(int argc, char** argv)
     renderer->InitDensityResources(engine->densitySystem.densityField);
 
     long iter = 0;
+	bool paused = false;
 
     while (running) {
         iter++;
 
         auto startTime = std::chrono::high_resolution_clock::now();
 
+		inputManager.BeginFrame();
 
         while (window->PollEvents(event)) {
             if (event.type == SDL_QUIT)
                 running = false;
+
+            // send to the input manager
+			inputManager.ProcessEvent(event);
         }
 
-        engine->Update(scene, dt);
+        inputManager.EndFrame();
+
+
+        if (inputManager.WasKeyPressed(SDL_SCANCODE_SPACE))
+            paused = !paused;
+
+        if (!paused)
+            engine->Update(scene, dt);
+
         //renderer->UploadDensity(engine->densityField);
         renderer->UploadParticlePositions(scene, engine->densitySystem.kernelRadius);
         renderer->Render(scene);
