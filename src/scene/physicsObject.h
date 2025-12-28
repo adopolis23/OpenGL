@@ -42,7 +42,7 @@ public:
     float radius;
 
     // mass in grams i guess
-    float mass = 1000;
+    float mass = 0.1f;
 
     virtual void GenerateObjectModel() = 0;
     

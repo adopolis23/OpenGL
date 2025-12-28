@@ -1,7 +1,7 @@
 #include "densitySystem.h"
 
 
-DensitySystem::DensitySystem(const Camera* cam)
+DensitySystem::DensitySystem(const Camera* cam, const Scene& scene)
 {
     camera = cam;
 
@@ -11,6 +11,10 @@ DensitySystem::DensitySystem(const Camera* cam)
     densityField.cellSizeX = cam->world_width / (float)densityField.width;
     densityField.cellSizeY = cam->world_height / (float)densityField.height;
     densityField.density.resize(densityField.width * densityField.height);
+
+    // ensure capacity
+    particleDensity.reserve(scene.objects.size());
+    particlePressureForce.reserve(scene.objects.size());
 }
 
 
@@ -190,24 +194,22 @@ void DensitySystem::CalculateDensityGradientAtParticles(const Scene& scene)
 }
 
 
-
 // compute per-particle density, pressure and pairwise pressure+viscosity forces.
 // Stores results in particleDensity and particlePressureForce.
 void DensitySystem::CalculatePressureForParticles(const Scene& scene)
 {
-    // First pass: compute densities
+    // compute densities
+    // clear previous maps to start fresh
     particleDensity.clear();
     particlePressureForce.clear();
 
-    // ensure capacity
-    particleDensity.reserve(scene.objects.size());
-    particlePressureForce.reserve(scene.objects.size());
+    // tunables to keep forces in a normal numeric range
+    const float pressureScale = 0.02f;    // updated: global scale applied to computed pressure (tune down to reduce magnitude)
+    const float viscosityScale = 0.5f;    // updated: further scale for viscosity contribution
+    const float maxInteractionForce = 1e-7f; // updated: clamp single neighbor contribution
+    const float maxTotalForce = 1e-7f;     // updated: clamp per-particle total force
 
-
-
-
-
-    // compute density for each particle using neighbors via spatial grid (same quad neighborhood)
+    // updated: compute density for each particle using neighbors via spatial grid (same quad neighborhood)
     for (const auto& [id, obj] : scene.objects)
     {
         float rho = 0.0f;
@@ -232,9 +234,10 @@ void DensitySystem::CalculatePressureForParticles(const Scene& scene)
                     glm::vec3 rvec = pos - other->position;
                     float dist = glm::length(rvec);
                     if (dist > kernelRadius) continue;
+
+                    // include particle mass in density contribution (standard SPH)
                     if (dist < 1e-6f)
                     {
-                        // self contribution (or nearly coincident) - add kernel at zero distance
                         rho += DensitySmoothingKernel(kernelRadius, 0.0f) * other->mass;
                     }
                     else
@@ -245,28 +248,32 @@ void DensitySystem::CalculatePressureForParticles(const Scene& scene)
             }
         }
 
-        // save density (avoid zero)
+        // avoid zero density
         particleDensity[id] = (rho > 1e-8f) ? rho : 1e-8f;
     }
 
 
-
-
-
-
-    // compute pressures p = k * (rho - restDensity)
+    // compute pressure per particle, with optional clamp of negative pressures (helps stability)
     std::unordered_map<int, float> particlePressure;
     particlePressure.reserve(particleDensity.size());
+    float maxRho = 0.0f;
     for (const auto& [id, rho] : particleDensity)
     {
-        particlePressure[id] = stiffness * (rho - restDensity);
+        maxRho = std::max(maxRho, rho);
+
+        // original physical pressure p = k * (rho - restDensity)
+        float p = stiffness * (rho - restDensity);
+
+        // clamp tensile (negative) pressure to zero to avoid attraction that causes clumping
+        if (p < 0.0f) p = 0.0f;
+
+        // scale pressure down globally to match simulation units (tune this)
+        p *= pressureScale;
+
+        particlePressure[id] = p;
     }
 
-
-
-
-
-    // Second pass: compute pairwise pressure & viscosity forces
+    // second pass - compute pairwise pressure & viscosity forces (symmetric SPH pressure)
     for (const auto& [id, obj] : scene.objects)
     {
         glm::vec2 force{ 0.0f, 0.0f };
@@ -300,22 +307,54 @@ void DensitySystem::CalculatePressureForParticles(const Scene& scene)
                     glm::vec2 dir = glm::vec2(rvec.x, rvec.y) / dist;
                     float gradW = DensitySmoothingKernelDerivative(kernelRadius, dist);
 
-                    // Pressure contribution (SPH symmetric form)
+                    // standard symmetric SPH pressure term
                     float rho_j = particleDensity[nid];
                     float p_j = particlePressure[nid];
-
-                    // mass_j used from other particle
                     float m_j = other->mass;
 
-                    glm::vec2 pressTerm = -m_j * (p_i + p_j) / (2.0f * rho_j) * gradW * dir;
+                    // compute pressure contribution using p_i/rho_i^2 + p_j/rho_j^2
+                    float inv_rho_i2 = 1.0f / (rho_i * rho_i);
+                    float inv_rho_j2 = 1.0f / (rho_j * rho_j);
+                    glm::vec2 pressTerm = -m_j * (p_i * inv_rho_i2 + p_j * inv_rho_j2) * gradW * dir;
+
+                    // clamp single-interaction pressure contribution
+                    {
+                        float mag2 = pressTerm.x * pressTerm.x + pressTerm.y * pressTerm.y;
+                        if (mag2 > (maxInteractionForce * maxInteractionForce))
+                        {
+                            float inv = 1.0f / std::sqrt(mag2);
+                            pressTerm *= (maxInteractionForce * inv);
+                        }
+                    }
+
                     force += pressTerm;
 
-                    // Simple viscosity term (stabilizer): proportional to velocity difference weighted by kernel
+                    // viscosity
                     glm::vec2 velDiff = glm::vec2(other->velocity.x - vel.x, other->velocity.y - vel.y);
                     float w = DensitySmoothingKernel(kernelRadius, dist);
-                    glm::vec2 viscTerm = viscosity * m_j * (velDiff / rho_j) * w;
+                    glm::vec2 viscTerm = viscosityScale * viscosity * m_j * (velDiff / rho_j) * w;
+
+                    {
+                        float vmag2 = viscTerm.x * viscTerm.x + viscTerm.y * viscTerm.y;
+                        if (vmag2 > (maxInteractionForce * maxInteractionForce))
+                        {
+                            float inv = 1.0f / std::sqrt(vmag2);
+                            viscTerm *= (maxInteractionForce * inv);
+                        }
+                    }
+
                     force += viscTerm;
                 }
+            }
+        }
+
+        // clamp total per-particle force to avoid huge acceleration
+        {
+            float fmag2 = force.x * force.x + force.y * force.y;
+            if (fmag2 > (maxTotalForce * maxTotalForce))
+            {
+                float inv = 1.0f / std::sqrt(fmag2);
+                force *= (maxTotalForce * inv);
             }
         }
 

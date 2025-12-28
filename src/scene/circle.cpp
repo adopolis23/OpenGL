@@ -46,7 +46,8 @@ void Circle::InitVelocity()
 
     float speed = RandomFloat(minSpeed, maxSpeed);
 
-    velocity = glm::vec3{(dir * speed), 0.0f};
+    //velocity = glm::vec3{(dir * speed), 0.0f};
+    velocity = glm::vec3{ 0.0f, 0.0f, 0.0f };
 
 }
 

@@ -2,7 +2,7 @@
 
 
 Engine::Engine(const Camera* cam, const Scene& scene)
-    :densitySystem(cam), spatialGrid(scene.objectCount, densitySystem.kernelRadius*2, cam)
+    :densitySystem(cam, scene), spatialGrid(scene.objectCount, densitySystem.kernelRadius*2, cam)
 {
     camera = cam;
 
@@ -73,6 +73,12 @@ void Engine::Update(Scene& scene, float dt)
 
     spatialGrid.UpdateQuadLocations(scene);
 
+
+    //update the values in the particleDensityGradient object to store the density gradient at each particles position
+    //densitySystem.CalculateDensityGradientAtParticles(scene);
+    densitySystem.CalculatePressureForParticles(scene);
+    ApplyPressureForceToParticles(scene, dt);
+
     //ApplyGravity(scene);
 
     for (auto& [id, obj] : scene.objects)
@@ -86,11 +92,8 @@ void Engine::Update(Scene& scene, float dt)
 
     }
 
-    //update the values in the particleDensityGradient object to store the density gradient at each particles position
-    densitySystem.CalculateDensityGradientAtParticles(scene);
-    ApplyPressureForceToParticles(scene, dt);
-
     // update the values in the DensityField object to display the density in the background
+	// not done anymore because this is handled by the shaders now
     //CalculateDensityField(scene);
 
 }
@@ -102,9 +105,10 @@ void Engine::Update(Scene& scene, float dt)
 void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)
 {
     float accelerationX, accelerationY;
-    float constant = 0.00001f;
-
+    glm::vec2 force;
     float max_velocity = 0.003f;
+
+    float constant = 0.0001f;
 
     //f = m * a
     // therefor the acceleration to apply to the particle a = f / m
@@ -112,36 +116,25 @@ void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)
     for (auto& [id, obj] : scene.objects)
     {
         // check if there is a density gradient entry for this particle
-        if (densitySystem.particleDensityGradient.find(obj->objectId) == densitySystem.particleDensityGradient.end())
+        if (densitySystem.particlePressureForce.find(obj->objectId) == densitySystem.particlePressureForce.end())
         {
             continue;
         }
 
-        accelerationX = (-1) * densitySystem.particleDensityGradient.at(obj->objectId).x / obj->mass;
-        accelerationY = (-1) * densitySystem.particleDensityGradient.at(obj->objectId).y / obj->mass;
+        force = densitySystem.particlePressureForce.at(obj->objectId);
 
-        // add this acceleration to the object velocity
-        obj->velocity.x += accelerationX * dt * constant;
-        obj->velocity.y += accelerationY * dt * constant;
-        
-        if (obj->velocity.x > max_velocity)
-        {
-            obj->velocity.x = max_velocity;
-        }
+        // acceleration = F / m
+        accelerationX = force.x / obj->mass;
+        accelerationY = force.y / obj->mass;
 
-        if (obj->velocity.x < (-1) * max_velocity)
-        {
-            obj->velocity.x = (-1) * max_velocity;
-        }
+        // integrate velocity using dt
+        obj->velocity.x += accelerationX * dt;
+        obj->velocity.y += accelerationY * dt;
 
-        if (obj->velocity.y > max_velocity)
-        {
-            obj->velocity.y = max_velocity;
-        }
-
-        if (obj->velocity.y < (-1) * max_velocity)
-        {
-            obj->velocity.y = (-1) * max_velocity;
-        }
+        // clamp velocity to avoid explosion (tune max_velocity)
+        if (obj->velocity.x > max_velocity) obj->velocity.x = max_velocity;
+        if (obj->velocity.x < -max_velocity) obj->velocity.x = -max_velocity;
+        if (obj->velocity.y > max_velocity) obj->velocity.y = max_velocity;
+        if (obj->velocity.y < -max_velocity) obj->velocity.y = -max_velocity;
     }
 }

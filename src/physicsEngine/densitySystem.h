@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "renderer/camera.h"
 #include "spatialGrid.h"
+#include <iostream>
 
 // struct to contain information about the density at each point in space with
 // a variable resolution
@@ -26,7 +27,7 @@ class DensitySystem
 
 public:
 
-    DensitySystem(const Camera* cam);
+    DensitySystem(const Camera* cam, const Scene& scene);
 
     //populates the cache of density gradients at each particle position
     void CalculateDensityGradientAtParticles(const Scene& scene);
@@ -47,6 +48,8 @@ public:
 
     // per-particle computed pressure force (vector)
     std::unordered_map<int, glm::vec2> particlePressureForce;
+
+    void CalculatePressureForParticles(const Scene& scene);
 
     float restDensity = 1.0f;
     float stiffness = 1.0f;    // pressure constant
@@ -69,9 +72,6 @@ private:
 
     // calculates the actual density value at some position; TODO: might change name
     float CalculateDensityAtParticle(const Scene& scene, const glm::vec3& position);
-    
-
-    void CalculatePressureForParticles(const Scene& scene);
 
 
     // reference to the worlds camera
