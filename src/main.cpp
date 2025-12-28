@@ -53,8 +53,6 @@ int main(int argc, char** argv)
     while (running) {
         iter++;
 
-        //SDL_Delay((Uint32)(0.1 * 1000.0f));
-
         auto startTime = std::chrono::high_resolution_clock::now();
 
 

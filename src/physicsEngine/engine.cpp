@@ -58,7 +58,7 @@ void Engine::HandleCollisions(PhysicsObject* obj)
 
 void Engine::ApplyGravity(Scene& scene)
 {
-    float accel_gravity = 0.00003f;
+    float accel_gravity = 0.000003f;
 
     for (auto& [id, obj] : scene.objects)
     {

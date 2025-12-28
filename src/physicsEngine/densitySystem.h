@@ -53,7 +53,7 @@ public:
 
     float restDensity = 1.0f;
     float stiffness = 1.0f;    // pressure constant
-    float viscosity = 0.02f;   // small stabilizing viscosity
+    float viscosity = 0.002f;   // small stabilizing viscosity
 
 private:
     

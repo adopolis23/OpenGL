@@ -196,6 +196,7 @@ void DensitySystem::CalculateDensityGradientAtParticles(const Scene& scene)
 
 // compute per-particle density, pressure and pairwise pressure+viscosity forces.
 // Stores results in particleDensity and particlePressureForce.
+// TODO: need to optimize further for performance
 void DensitySystem::CalculatePressureForParticles(const Scene& scene)
 {
     // compute densities
@@ -204,10 +205,11 @@ void DensitySystem::CalculatePressureForParticles(const Scene& scene)
     particlePressureForce.clear();
 
     // tunables to keep forces in a normal numeric range
-    const float pressureScale = 0.02f;    // updated: global scale applied to computed pressure (tune down to reduce magnitude)
-    const float viscosityScale = 0.5f;    // updated: further scale for viscosity contribution
-    const float maxInteractionForce = 1e-7f; // updated: clamp single neighbor contribution
-    const float maxTotalForce = 1e-7f;     // updated: clamp per-particle total force
+    const float pressureScale = 0.002f;    // global scale applied to computed pressure (tune down to reduce magnitude)
+    const float viscosityScale = 1.0f;    // scale for viscosity contribution; not used
+
+	const float maxInteractionForce = 1e-7f; // clamp single neighbor contribution; these two might be redundant due to the pressure multiplyer above
+    const float maxTotalForce = 1e-7f;     // clamp per-particle total force
 
     // updated: compute density for each particle using neighbors via spatial grid (same quad neighborhood)
     for (const auto& [id, obj] : scene.objects)
