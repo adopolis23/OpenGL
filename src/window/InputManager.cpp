@@ -20,11 +20,19 @@ void InputManager::ProcessEvent(const SDL_Event& e)
         break;
 
     case SDL_MOUSEBUTTONDOWN:
-        // map mouse buttons to SDL_Scancode-like enums or handle separately
-		// todo need to implement mouse button handling
+        mouse_down.insert(e.button.button);
+        mouseX = e.button.x;
+        mouseY = e.button.y;
+        mouseClicked = true;
+        mouseClickedButton = e.button.button;
+        mouseClickX = e.button.x;
+        mouseClickY = e.button.y;
         break;
 
     case SDL_MOUSEBUTTONUP:
+        mouse_down.erase(e.button.button);
+        mouseX = e.button.x;
+        mouseY = e.button.y;
         break;
 
     default:
@@ -37,12 +45,10 @@ void InputManager::BeginFrame()
 {
     // snapshot previous keys, will be updated during event processing
     prev_keys_pressed = keys_pressed;
-}
+    prev_mouse_down = mouse_down;
 
-void InputManager::GetMousePosition(int& x, int& y) const
-{
-    x = mouseX;
-    y = mouseY;
+    // clear per-frame click flag at start of frame
+    mouseClicked = false;
 }
 
 void InputManager::EndFrame()
@@ -58,4 +64,27 @@ bool InputManager::IsKeyDown(SDL_Scancode sc) const
 bool InputManager::WasKeyPressed(SDL_Scancode sc) const
 {
     return keys_pressed.find(sc) != keys_pressed.end() && prev_keys_pressed.find(sc) == prev_keys_pressed.end();
+}
+
+// mouse functions
+
+glm::vec2 InputManager::GetMousePosition() const
+{
+    return glm::vec2(mouseX, mouseY);
+}
+
+bool InputManager::IsMouseDown(Uint8 button) const
+{
+    return mouse_down.find(button) != mouse_down.end();
+}
+
+bool InputManager::WasMouseClicked(Uint8 button) const
+{
+    // true if a click event for this button occurred this frame
+    return mouseClicked && mouseClickedButton == button;
+}
+
+glm::vec2 InputManager::GetLastClickPosition() const
+{
+    return glm::vec2(mouseClickX, mouseClickY);
 }

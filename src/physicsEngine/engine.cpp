@@ -99,7 +99,50 @@ void Engine::Update(Scene& scene, float dt)
 }
 
 
+void Engine::ApplyRadialForceToParticlesAtPosition(Scene& scene, const glm::vec2& position, float forceMagnitude, float radius, float dt)
+{
+    float max_velocity = 0.003f;
+    
+	// first we need to find which quads are in range of the radial force
+	// skip for now
+    float quadSize = spatialGrid.quadSize;
+    int quads_to_check = static_cast<int>(std::ceil(radius / quadSize));
 
+	float accelerationX, accelerationY;
+
+    for (auto& [id, obj] : scene.objects)
+    {
+		// get direction from force position to particle
+		glm::vec2 dir = glm::vec2(obj->position.x, obj->position.y) - position;
+
+		//get distance from force position to particle
+		float dist = glm::length(dir);
+
+        if (dist > radius) continue;
+
+		// normalize direction
+		dir = dir / dist;
+
+		//constant force for all particles in radius
+        glm::vec2 force = glm::vec2(dir.x * forceMagnitude, dir.y * forceMagnitude);
+
+        // acceleration = F / m
+        accelerationX = force.x / obj->mass;
+        accelerationY = force.y / obj->mass;
+
+        // integrate velocity using dt
+        obj->velocity.x += accelerationX * dt;
+        obj->velocity.y += accelerationY * dt;
+
+        // clamp velocity to avoid explosion (tune max_velocity)
+        if (obj->velocity.x > max_velocity) obj->velocity.x = max_velocity;
+        if (obj->velocity.x < -max_velocity) obj->velocity.x = -max_velocity;
+        if (obj->velocity.y > max_velocity) obj->velocity.y = max_velocity;
+        if (obj->velocity.y < -max_velocity) obj->velocity.y = -max_velocity;
+
+    }
+
+}
 
 
 void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)

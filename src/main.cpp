@@ -35,6 +35,7 @@ int main(int argc, char** argv)
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
     Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);
+
     Scene scene;
     InitScene(scene);
 
@@ -70,6 +71,26 @@ int main(int argc, char** argv)
 
         inputManager.EndFrame();
 
+
+
+        if (inputManager.IsMouseDown(SDL_BUTTON_LEFT))
+        {
+			glm::vec2 mousePos = inputManager.GetMousePosition();
+
+			float convertedX = camera.left_world_bound + ((mousePos.x / width) * camera.world_width);
+			float convertedY = camera.top_world_bound - ((mousePos.y / height) * camera.world_height);
+
+            engine->ApplyRadialForceToParticlesAtPosition(scene, glm::vec2(convertedX, convertedY), 0.000001f, 1.0f, 1.0f);
+        }
+        if (inputManager.IsMouseDown(SDL_BUTTON_RIGHT))
+        {
+            glm::vec2 mousePos = inputManager.GetMousePosition();
+
+            float convertedX = camera.left_world_bound + ((mousePos.x / width) * camera.world_width);
+            float convertedY = camera.top_world_bound - ((mousePos.y / height) * camera.world_height);
+
+            engine->ApplyRadialForceToParticlesAtPosition(scene, glm::vec2(convertedX, convertedY), -0.000001f, 1.0f, 1.0f);
+        }
 
         if (inputManager.WasKeyPressed(SDL_SCANCODE_SPACE))
             paused = !paused;

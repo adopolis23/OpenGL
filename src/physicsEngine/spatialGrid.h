@@ -25,13 +25,13 @@ public:
     int quadWidth;
     int quadHeight;
 
+    //size of the actual quads in world units. Going to be 2 * kernel radius
+    float quadSize;
+
 private:
 
     //index into this vector is the particle id/number the value is the hash for which quad its in
     std::vector<int> objectid_to_quadid; // [particleID] -> quadID
-
-    //size of the actual quads in world units. Going to be 2 * kernel radius
-    float quadSize;
 
     const Camera* camera;
 };
