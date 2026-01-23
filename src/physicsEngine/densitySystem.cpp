@@ -1,4 +1,4 @@
-#include "densitySystem.h"
+﻿#include "densitySystem.h"
 
 
 DensitySystem::DensitySystem(const Camera* cam, const Scene& scene)
@@ -21,27 +21,23 @@ DensitySystem::DensitySystem(const Camera* cam, const Scene& scene)
 
 float DensitySystem::DensitySmoothingKernel(float radius, float dist)
 {
-    // calculate the volume of the smoothing kernel to divide out at the end
-    float volume = (M_PI * pow(radius, 8)) / 4;
+    if (dist >= radius) return 0.0f;
 
-    //calc the value and clamp it to zero
-    float value = (radius * radius) - (dist * dist);
-    value = (value > 0) ? value : 0;
+    float x = 1.0f - dist / radius;
+    float normalization = 10.0f / (M_PI * powf(radius, 6));
 
-    return ((value * value * value) / volume);
+    return normalization * x * x * x;
 }
 
 float DensitySystem::DensitySmoothingKernelDerivative(float radius, float dist)
 {
-    if (dist > radius) return 0.0f;
+    if (dist >= radius) return 0.0f;
+    if (dist < 1e-6f) return 0.0f;
 
-    float r2 = radius * radius;
-    float value = r2 - (dist * dist);
+    float x = 1.0f - dist / radius;
+    float normalization = 10.0f / (M_PI * powf(radius, 6));
 
-    const float inv_r8 = 1.0f / (r2 * r2 * r2 * r2); // r^8
-    const float scale = -24.0f * inv_r8 * (1.0f / M_PI);
-
-    return scale * dist * value * value;
+    return -3.0f * normalization * x * x / radius;
 }
 
 

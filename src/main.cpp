@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 			float convertedX = camera.left_world_bound + ((mousePos.x / width) * camera.world_width);
 			float convertedY = camera.top_world_bound - ((mousePos.y / height) * camera.world_height);
 
-            engine->ApplyRadialForceToParticlesAtPosition(scene, glm::vec2(convertedX, convertedY), 0.000001f, 1.0f, 1.0f);
+            engine->ApplyRadialForceToParticlesAtPosition(scene, glm::vec2(convertedX, convertedY), 0.0000003f, 1.0f, dt);
         }
         if (inputManager.IsMouseDown(SDL_BUTTON_RIGHT))
         {
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
             float convertedX = camera.left_world_bound + ((mousePos.x / width) * camera.world_width);
             float convertedY = camera.top_world_bound - ((mousePos.y / height) * camera.world_height);
 
-            engine->ApplyRadialForceToParticlesAtPosition(scene, glm::vec2(convertedX, convertedY), -0.000001f, 1.0f, 1.0f);
+            engine->ApplyRadialForceToParticlesAtPosition(scene, glm::vec2(convertedX, convertedY), -0.0000003f, 1.0f, dt);
         }
 
         if (inputManager.WasKeyPressed(SDL_SCANCODE_SPACE))
