@@ -2,6 +2,9 @@ workspace "ParticleSimulation"
     architecture "x86_64"
     configurations { "Debug", "Release" }
 
+
+
+
 project "ParticleSimulation"
     kind "ConsoleApp"
     language "C++"
@@ -15,7 +18,16 @@ project "ParticleSimulation"
         "src/**.cpp",
         "src/shaders/**.cpp",
         "src/renderer/**.cpp",
-        "libs/glad/src/glad.c"
+        "libs/glad/src/glad.c",
+
+        -- ImGui core
+        "external/imgui/*.cpp",
+        "external/imgui/*.h",
+        -- SDL2 + OpenGL backend
+        "external/imgui/backends/imgui_impl_sdl2.cpp",
+        "external/imgui/backends/imgui_impl_sdl2.h",
+        "external/imgui/backends/imgui_impl_opengl3.cpp",
+        "external/imgui/backends/imgui_impl_opengl3.h"
     }
 
     includedirs {
@@ -25,7 +37,10 @@ project "ParticleSimulation"
         "src/physicsEngine",
         "libs/glad/include",
         "/usr/include",
-        "E:/dev/vcpkg/installed/x64-windows/include"
+        "E:/dev/vcpkg/installed/x64-windows/include",
+
+        "external/imgui",
+        "external/imgui/backends"
     }
 
     libdirs { "E:/dev/vcpkg/installed/x64-windows/lib" }
@@ -43,3 +58,5 @@ project "ParticleSimulation"
     filter "configurations:Release"
         defines { "NDEBUG" }
         optimize "On"
+
+

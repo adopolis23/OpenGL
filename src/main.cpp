@@ -32,8 +32,8 @@ int main(int argc, char** argv)
     int width = 2500;
     int height = 600;
 
-    Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
     Window* settingsWindow = new Window("Settings", 300, height, 100, 100);
+    Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
 
     Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);

@@ -9,4 +9,4 @@ Makefile
 *.filters
 *.user
 *.exe
-external
+build
