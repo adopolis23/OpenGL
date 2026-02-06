@@ -10,3 +10,4 @@ Makefile
 *.user
 *.exe
 build
+ParticleSimulation

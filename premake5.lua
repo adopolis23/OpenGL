@@ -40,16 +40,22 @@ project "ParticleSimulation"
         "E:/dev/vcpkg/installed/x64-windows/include",
 
         "external/imgui",
-        "external/imgui/backends"
+        "external/imgui/backends",
+
+        -- linux include path
+        "/usr/include/SDL2"
     }
 
     libdirs { "E:/dev/vcpkg/installed/x64-windows/lib" }
 
     filter "system:linux"
         links { "SDL2", "GL", "dl", "pthread" }
+        defines { 'PATH="/home/bran406/dev/OpenGL/"' }
 
     filter "system:windows"
         links { "SDL2", "opengl32" }
+        defines { 'PATH="E:/dev/OpenGL/"' }
+
 
     filter "configurations:Debug"
         defines { "DEBUG" }
