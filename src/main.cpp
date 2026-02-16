@@ -105,6 +105,9 @@ int main(int argc, char** argv)
         renderer->UploadParticlePositions(scene, engine->densitySystem.kernelRadius);
         renderer->Render(scene);
         window->SwapBuffers();
+        
+        // render the secondary settings window
+        //settingsWindow->Render();
 
         auto endTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> iterationTime = endTime - startTime;

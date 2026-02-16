@@ -24,15 +24,15 @@ private:
     int initialize_sdl();
     int initialize_window();
 
-    std::string window_name;
-    int width, height;
-    int x_pos, y_pos;
-
   
     // This is where all the GPU rendering info is (apparently)
     SDL_GLContext glContext;
     
 
 protected:
+    std::string window_name;
+    int width, height;
+    int x_pos, y_pos;
+
     SDL_Window* window = nullptr;
 };
