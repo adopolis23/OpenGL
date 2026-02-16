@@ -6,6 +6,7 @@
 #include <chrono>
 
 #include "window/window.h"
+#include "window/SettingsWindow.h"
 #include "window/InputManager.h"
 #include "renderer/renderer.h"
 #include "scene/circle.h"
@@ -16,7 +17,7 @@
 void InitScene(Scene& scene)
 {
     // adds the particles to the simulation, might move to some function in scene maybe?
-    int num_particles = 1000;
+    int num_particles = 10;
     float radius = 0.01f;
     for (int i = 0; i < num_particles; i++)
     {
@@ -32,7 +33,7 @@ int main(int argc, char** argv)
     int width = 2500;
     int height = 600;
 
-    Window* settingsWindow = new Window("Settings", 300, height, 100, 100);
+    SettingsWindow* settingsWindow = new SettingsWindow("Settings", 300, height, 100, 100);
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
 
     Camera camera(width, height);

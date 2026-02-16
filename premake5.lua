@@ -25,6 +25,7 @@ project "ParticleSimulation"
         "external/imgui/*.h",
         -- SDL2 + OpenGL backend
         "external/imgui/backends/imgui_impl_sdl2.cpp",
+        "external/imgui/backends/imgui_impl_sdlrenderer2.cpp",
         "external/imgui/backends/imgui_impl_sdl2.h",
         "external/imgui/backends/imgui_impl_opengl3.cpp",
         "external/imgui/backends/imgui_impl_opengl3.h"

@@ -28,8 +28,11 @@ private:
     int width, height;
     int x_pos, y_pos;
 
-    SDL_Window* window = nullptr;
-
+  
     // This is where all the GPU rendering info is (apparently)
     SDL_GLContext glContext;
+    
+
+protected:
+    SDL_Window* window = nullptr;
 };
