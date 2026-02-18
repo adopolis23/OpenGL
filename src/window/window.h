@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL_video.h>
 #include <globals.h>
 #include<SDL2/SDL.h>
 #include<glad/glad.h>
@@ -17,6 +18,8 @@ public:
     bool PollEvents(SDL_Event& e);
 
     void SwapBuffers();
+
+    SDL_Window* GetWindow() const;
     
 private:
 

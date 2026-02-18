@@ -1,3 +1,4 @@
+#include <SDL2/SDL_events.h>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
@@ -63,13 +64,20 @@ int main(int argc, char** argv)
         auto startTime = std::chrono::high_resolution_clock::now();
 
 		inputManager.BeginFrame();
-
-        while (window->PollEvents(event)) {
+        
+        SDL_Event event;
+        while (SDL_PollEvent(event)) {
             if (event.type == SDL_QUIT)
                 running = false;
-
-            // send to the input manager
-			inputManager.ProcessEvent(event);
+            
+            // Route event to the appropriate window
+            if (event.window.windowID == SDL_GetWindowID(settingsWindow->GetWindow())) {
+                // This is a settings window event - let ImGui handle it
+                settingsWindow->ProcessEvent(event);
+            } else {
+                // This is a main window event - handle with input manager
+                inputManager.ProcessEvent(event);
+            }
         }
 
         inputManager.EndFrame();
@@ -107,7 +115,7 @@ int main(int argc, char** argv)
         window->SwapBuffers();
         
         // render the secondary settings window
-        //settingsWindow->Render();
+        settingsWindow->Render();
 
         auto endTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> iterationTime = endTime - startTime;

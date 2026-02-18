@@ -1,4 +1,5 @@
 #include "window.h"
+#include <SDL2/SDL_video.h>
 
 Window::Window(const std::string& name, int w, int h, int x, int y)
     :window_name(name), width(w), height(h), x_pos(x), y_pos(y)
@@ -88,4 +89,9 @@ int Window::initialize_sdl()
 
 
     return EXIT_SUCCESS;
+}
+
+SDL_Window* Window::GetWindow() const
+{
+    return window;
 }

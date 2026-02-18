@@ -1,10 +1,6 @@
 #include "SettingsWindow.h"
 
-#include "imgui.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_sdlrenderer2.h"
-#include "window.h"
-#include <SDL2/SDL_render.h>
+
 
 SettingsWindow::SettingsWindow(const std::string &name, int w, int h, int x, int y)
     :Window(name, w, h, x, y), renderer(nullptr)
@@ -22,7 +18,9 @@ SettingsWindow::SettingsWindow(const std::string &name, int w, int h, int x, int
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
+    imgui_context = ImGui::CreateContext();
+    //ImGui::SetCurrentContext(imgui_context);
+
     ImGuiIO& io = ImGui::GetIO();
 
     io.Fonts->AddFontDefault();
@@ -110,6 +108,12 @@ void SettingsWindow::Render()
 {
     if (!renderer) return;
 
+    ImGuiContext* prev_context = ImGui::GetCurrentContext();
+
+
+    ImGui::SetCurrentContext(imgui_context);
+
+
     // Start ImGui frame
     ImGui_ImplSDLRenderer2_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -131,6 +135,25 @@ void SettingsWindow::Render()
     // Present
     SDL_RenderPresent(renderer);
 
+    
+    ImGui::SetCurrentContext(prev_context);
 }
+
+
+// switch to settings window context and process event
+void SettingsWindow::HandleEvent(const SDL_Event& event)
+{
+    ImGuiContext* prev_context = ImGui::GetCurrentContext();
+    ImGui::SetCurrentContext(ImGuiContext);
+
+    ImGuiL_ImplSDL2_ProcessEvent(&event);
+
+    ImGui::SetCurrentContext(prev_context);
+}
+
+
+
+
+
 
 
