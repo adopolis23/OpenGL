@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     int width = 2500;
     int height = 600;
 
-    SettingsWindow* settingsWindow = new SettingsWindow("Settings", 300, height, 100, 100);
+    SettingsWindow* settingsWindow = new SettingsWindow("Settings", 600, height, 100, 100);
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
 
     Camera camera(width, height);
@@ -66,15 +66,17 @@ int main(int argc, char** argv)
 		inputManager.BeginFrame();
         
         SDL_Event event;
-        while (SDL_PollEvent(event)) {
+        while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT)
                 running = false;
             
             // Route event to the appropriate window
-            if (event.window.windowID == SDL_GetWindowID(settingsWindow->GetWindow())) {
-                // This is a settings window event - let ImGui handle it
+            Uint32 windowID = SDL_GetWindowID(SDL_GetWindowFromID(event.window.windowID));
+            
+            if (settingsWindow && windowID == SDL_GetWindowID(settingsWindow->GetWindow())) {
+                // This is a settings window event
                 settingsWindow->ProcessEvent(event);
-            } else {
+            } else if (window && windowID == SDL_GetWindowID(window->GetWindow())) {
                 // This is a main window event - handle with input manager
                 inputManager.ProcessEvent(event);
             }
@@ -110,12 +112,16 @@ int main(int argc, char** argv)
             engine->Update(scene, dt);
 
         //renderer->UploadDensity(engine->densityField);
+        window->MakeCurrent();
         renderer->UploadParticlePositions(scene, engine->densitySystem.kernelRadius);
         renderer->Render(scene);
         window->SwapBuffers();
         
         // render the secondary settings window
-        settingsWindow->Render();
+        if (settingsWindow)
+        {
+            settingsWindow->Render();
+        }
 
         auto endTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> iterationTime = endTime - startTime;

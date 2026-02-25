@@ -16,7 +16,10 @@ Window::Window(const std::string& name, int w, int h, int x, int y)
 
     printf("SDL Window Initialized\n");
 }
-
+void Window::MakeCurrent()
+{
+    SDL_GL_MakeCurrent(window, glContext);
+}
 
 
 

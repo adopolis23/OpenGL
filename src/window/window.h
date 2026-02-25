@@ -20,6 +20,8 @@ public:
     void SwapBuffers();
 
     SDL_Window* GetWindow() const;
+
+    void MakeCurrent();
     
 private:
 
@@ -28,14 +30,15 @@ private:
     int initialize_window();
 
   
-    // This is where all the GPU rendering info is (apparently)
-    SDL_GLContext glContext;
     
 
 protected:
     std::string window_name;
     int width, height;
     int x_pos, y_pos;
+
+    // This is where all the GPU rendering info is (apparently)
+    SDL_GLContext glContext;
 
     SDL_Window* window = nullptr;
 };

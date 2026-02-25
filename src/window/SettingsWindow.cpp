@@ -1,159 +1,111 @@
 #include "SettingsWindow.h"
+#include <SDL2/SDL_events.h>
 
 
 
-SettingsWindow::SettingsWindow(const std::string &name, int w, int h, int x, int y)
-    :Window(name, w, h, x, y), renderer(nullptr)
+SettingsWindow::SettingsWindow(const char* title, int w, int h, int x, int y) : Window(title, w, h, x, y) 
 {
-    
-    printf("Initializing Settings Window.\n");
+        
+        // Setup ImGui for this window
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        
+        // Setup Platform/Renderer bindings
+        ImGui_ImplSDL2_InitForOpenGL(window, glContext);
+        ImGui_ImplOpenGL3_Init("#version 130");
+        
+        // Make this window current for ImGui initialization
+        MakeCurrent();
 
-    
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-
-    if (renderer == NULL) {
-        printf("Error creating SDL_Renderer!\n");
-        return;
-    }
-
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    imgui_context = ImGui::CreateContext();
-    //ImGui::SetCurrentContext(imgui_context);
-
-    ImGuiIO& io = ImGui::GetIO();
-
-    io.Fonts->AddFontDefault();
-    printf("ImGui initialized, io.Fonts->Fonts.Size = %d\n", io.Fonts->Fonts.Size);
-
-     // Setup style
-    ImGui::StyleColorsDark();  // Use dark theme
-    
-    // Setup Platform/Renderer backends
-    bool sdl2_init = ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-    if (sdl2_init != 1)
-    {
-        printf("Error: ImGui_ImplSDL2_InitForSDLRenderer failed.\n");
-        return;
-    }
-    bool renderer_init = ImGui_ImplSDLRenderer2_Init(renderer);
-    if (sdl2_init != 1 || renderer_init != 1)
-    {
-        printf("Error: ImGui_ImplSDLRenderer2_Init failed\n");
-        return;
+        printf("SettingsWindow ImGui Initialized.");
     }
 
 
-    printf("SDL2 backend init: %d, Renderer backend init: %d\n", sdl2_init, renderer_init);
-
-
-    printf("Settings Window initialized successfully.\n");
-}
-
-
-SettingsWindow::~SettingsWindow()
+SettingsWindow::~SettingsWindow() 
 {
-    //Cleanup
-    ImGui_ImplSDLRenderer2_Shutdown();
+    // Cleanup ImGui
+    MakeCurrent(); // Ensure we're on the right context
+    ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
-    
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
-}
-
-
-void SettingsWindow::CreateUI() {
-    // Set initial window position/size (only first time)
-    ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_FirstUseEver);
-    
-    // Create the settings window
-    ImGui::Begin(window_name.c_str());
-    
-    // Add some text
-    ImGui::Text("Settings");
-    ImGui::Separator();
-    
-    // Add some sample settings controls
-    static float sliderValue = 0.5f;
-    ImGui::SliderFloat("Volume", &sliderValue, 0.0f, 1.0f);
-    
-    static bool checkboxValue = true;
-    ImGui::Checkbox("Enable Feature", &checkboxValue);
-    
-    static int selected = 0;
-    const char* options[] = {"Option 1", "Option 2", "Option 3"};
-    ImGui::Combo("Options", &selected, options, IM_ARRAYSIZE(options));
-    
-    if (ImGui::Button("Save Settings")) {
-        printf("Settings saved!\n");
-    }
-    
-    ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
-    }
-    
-    // Show some colored text to verify rendering
-    ImGui::TextColored(ImVec4(0, 1, 0, 1), "This text should be green!");
-    ImGui::TextColored(ImVec4(1, 0, 0, 1), "This text should be red!");
-    
-    ImGui::End();
 }
 
 
 void SettingsWindow::Render()
 {
-    if (!renderer) return;
-
-    ImGuiContext* prev_context = ImGui::GetCurrentContext();
-
-
-    ImGui::SetCurrentContext(imgui_context);
-
-
-    // Start ImGui frame
-    ImGui_ImplSDLRenderer2_NewFrame();
+    // Make this window's context current
+    MakeCurrent();
+    
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
     
-    // Create our UI
-    CreateUI();
+    // Create ImGui windows
+    CreateMainSettingsWindow();
     
-    // Render ImGui
+    if (showDemoWindow) {
+        ImGui::ShowDemoWindow(&showDemoWindow);
+    }
+    
+    // Rendering
     ImGui::Render();
+    glViewport(0, 0, width, height);
+    glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     
-    // Clear screen
-    SDL_SetRenderDrawColor(renderer, 45, 45, 45, 255);
-    SDL_RenderClear(renderer);
-    
-    // Render ImGui draw data
-    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
-    
-    // Present
-    SDL_RenderPresent(renderer);
-
-    
-    ImGui::SetCurrentContext(prev_context);
+    // Swap buffers
+    SwapBuffers();
 }
 
-
-// switch to settings window context and process event
-void SettingsWindow::HandleEvent(const SDL_Event& event)
+void SettingsWindow::ProcessEvent(SDL_Event& event)
 {
-    ImGuiContext* prev_context = ImGui::GetCurrentContext();
-    ImGui::SetCurrentContext(ImGuiContext);
-
-    ImGuiL_ImplSDL2_ProcessEvent(&event);
-
-    ImGui::SetCurrentContext(prev_context);
+    // Let ImGui handle the event first
+    ImGui_ImplSDL2_ProcessEvent(&event);
+    
+    // If ImGui doesn't want to handle it, you can add your own handling
+    if (!ImGui::GetIO().WantCaptureMouse && 
+        !ImGui::GetIO().WantCaptureKeyboard) {
+        // Handle events that shouldn't be captured by ImGui
+        if (event.type == SDL_KEYDOWN) {
+            // Your custom keyboard handling here
+        }
+    }
 }
 
 
-
-
-
-
-
+void SettingsWindow::CreateMainSettingsWindow()
+{
+    // Create a settings window
+    ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    
+    ImGui::Text("Simulation Controls");
+    ImGui::Separator();
+    
+    ImGui::Checkbox("Show Demo Window", &showDemoWindow);
+    ImGui::Checkbox("Show Another Window", &showAnotherWindow);
+    
+    ImGui::SliderFloat("Slider", &sliderValue, 0.0f, 1.0f, "%.3f");
+    
+    if (ImGui::Button("Counter")) {
+        counter++;
+    }
+    ImGui::SameLine();
+    ImGui::Text("count = %d", counter);
+    
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 
+                1000.0f / ImGui::GetIO().Framerate, 
+                ImGui::GetIO().Framerate);
+    
+    ImGui::End();
+    
+    // Another window example
+    if (showAnotherWindow) {
+        ImGui::Begin("Another Window", &showAnotherWindow);
+        ImGui::Text("Hello from another window!");
+        ImGui::End();
+    }
+}

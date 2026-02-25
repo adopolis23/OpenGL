@@ -1,27 +1,30 @@
+// SettingsWindow.h
 #pragma once
-
 #include "window.h"
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_render.h>
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
-#include "imgui_impl_sdlrenderer2.h"
+#include "imgui_impl_opengl3.h"
 
 class SettingsWindow : public Window {
-
-public:
-    SettingsWindow(const std::string &name, int w, int h, int x, int y);
-
-    ~SettingsWindow();
-
-    void HandleEvent(const SDL_Event& event);
-
-    void CreateUI();
-
-    void Render();
-
 private:
-    SDL_Renderer* renderer;
-    ImGuiContext* imgui_context;
+    bool showDemoWindow = false;
+    bool showAnotherWindow = false;
+    float sliderValue = 0.5f;
+    int counter = 0;
+    
+public:
+    SettingsWindow(const char* title, int w, int h, int x, int y);
 
+
+    virtual ~SettingsWindow();
+    
+    void Render();
+    
+    void ProcessEvent(SDL_Event& event);
+    
+    void CreateMainSettingsWindow();
+    
+    // Getters for settings values (to be used by main application)
+    float GetSliderValue() const { return sliderValue; }
+    int GetCounter() const { return counter; }
 };
