@@ -46,10 +46,6 @@ void SettingsWindow::Render()
     // Create ImGui windows
     CreateMainSettingsWindow();
     
-    if (showDemoWindow) {
-        ImGui::ShowDemoWindow(&showDemoWindow);
-    }
-    
     // Rendering
     ImGui::Render();
     glViewport(0, 0, width, height);
@@ -79,33 +75,26 @@ void SettingsWindow::ProcessEvent(SDL_Event& event)
 
 void SettingsWindow::CreateMainSettingsWindow()
 {
+    // Set the next window to cover the entire SDL window
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(width, height));
+    
+    // Window flags to make it non-movable, non-resizable, and without title bar
+    ImGuiWindowFlags windowFlags = 
+        ImGuiWindowFlags_NoMove |              // Cannot be moved
+        ImGuiWindowFlags_NoResize |             // Cannot be resized
+        ImGuiWindowFlags_NoTitleBar |           // No title bar
+        ImGuiWindowFlags_NoCollapse |           // Cannot collapse
+        ImGuiWindowFlags_NoBringToFrontOnFocus | // Stays in background
+        ImGuiWindowFlags_NoNavFocus;            // No navigation focus
+
     // Create a settings window
     ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
     
     ImGui::Text("Simulation Controls");
     ImGui::Separator();
     
-    ImGui::Checkbox("Show Demo Window", &showDemoWindow);
-    ImGui::Checkbox("Show Another Window", &showAnotherWindow);
-    
     ImGui::SliderFloat("Slider", &sliderValue, 0.0f, 1.0f, "%.3f");
     
-    if (ImGui::Button("Counter")) {
-        counter++;
-    }
-    ImGui::SameLine();
-    ImGui::Text("count = %d", counter);
-    
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 
-                1000.0f / ImGui::GetIO().Framerate, 
-                ImGui::GetIO().Framerate);
-    
     ImGui::End();
-    
-    // Another window example
-    if (showAnotherWindow) {
-        ImGui::Begin("Another Window", &showAnotherWindow);
-        ImGui::Text("Hello from another window!");
-        ImGui::End();
-    }
 }

@@ -7,10 +7,7 @@
 
 class SettingsWindow : public Window {
 private:
-    bool showDemoWindow = false;
-    bool showAnotherWindow = false;
     float sliderValue = 0.5f;
-    int counter = 0;
     
 public:
     SettingsWindow(const char* title, int w, int h, int x, int y);
@@ -26,5 +23,4 @@ public:
     
     // Getters for settings values (to be used by main application)
     float GetSliderValue() const { return sliderValue; }
-    int GetCounter() const { return counter; }
 };

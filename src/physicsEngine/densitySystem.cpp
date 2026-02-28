@@ -18,6 +18,10 @@ DensitySystem::DensitySystem(const Camera* cam, const Scene& scene)
 }
 
 
+void DensitySystem::SetKernelRadius(float value)
+{
+    kernelRadius = value;
+}
 
 float DensitySystem::DensitySmoothingKernel(float radius, float dist)
 {

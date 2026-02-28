@@ -32,6 +32,8 @@ public:
     //populates the cache of density gradients at each particle position
     void CalculateDensityGradientAtParticles(const Scene& scene);
 
+    void SetKernelRadius(float value);
+
     // stores particle ids and the (most recent) density gradient at their position
     std::unordered_map<int, glm::vec2> particleDensityGradient;
 
