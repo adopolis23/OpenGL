@@ -37,6 +37,8 @@ int main(int argc, char** argv)
     SettingsWindow* settingsWindow = new SettingsWindow("Settings", 300, height, 100, 100);
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
 
+
+
     Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);
 
@@ -46,8 +48,11 @@ int main(int argc, char** argv)
 	InputManager inputManager;
     Engine* engine = new Engine(&camera, scene);
 
-    
-
+    settingsWindow->RegisterFloatParameter("Kernel Radius", 0.3f,
+        [engine](float initial_value)
+        {
+            engine->densitySystem.SetKernelRadius(initial_value);
+        }); 
 
     bool running = true;
     SDL_Event event;

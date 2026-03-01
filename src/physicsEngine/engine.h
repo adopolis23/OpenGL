@@ -30,7 +30,7 @@ public:
     DensitySystem densitySystem;
 
     void ApplyRadialForceToParticlesAtPosition(Scene& scene, const glm::vec2& position, float forceMagnitude, float radius, float dt);
-    
+
 private:
     
     void ApplyGravity(Scene& scene);

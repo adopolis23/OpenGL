@@ -33,6 +33,23 @@ SettingsWindow::~SettingsWindow()
 }
 
 
+
+
+void SettingsWindow::RegisterFloatParameter(std::string param_name, float initial_value, std::function<void(float)> callback)
+{
+    floatCallbacks[param_name] = callback;
+    floatValues[param_name] = initial_value;
+}
+
+void SettingsWindow::RegisterIntParameter(std::string param_name, int initial_value, std::function<void(int)> callback)
+{
+    intCallbacks[param_name] = callback;
+    intValues[param_name] = initial_value;
+}
+
+
+
+
 void SettingsWindow::Render()
 {
     // Make this window's context current
@@ -93,8 +110,26 @@ void SettingsWindow::CreateMainSettingsWindow()
     
     ImGui::Text("Simulation Controls");
     ImGui::Separator();
+
+    // Float parameters
+    for (auto& [name, value] : floatValues) {
+        if (ImGui::SliderFloat(name.c_str(), &value, 0.0f, 2.0f, "%.1f")) {
+            floatValues[name] = value;
+            if (floatCallbacks.count(name)) {
+                floatCallbacks[name](value);  // Trigger callback
+            }
+        }
+    }
     
-    ImGui::SliderFloat("Slider", &sliderValue, 0.0f, 1.0f, "%.3f");
+    // Int parameters
+    for (auto& [name, value] : intValues) {
+        if (ImGui::SliderInt(name.c_str(), &value, 0, 100)) {
+            intValues[name] = value;
+            if (intCallbacks.count(name)) {
+                intCallbacks[name](value);
+            }
+        }
+    }
     
     ImGui::End();
 }
