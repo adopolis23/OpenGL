@@ -29,6 +29,21 @@ void InitScene(Scene& scene)
     }
 }
 
+void InitializeSettingsWindow(SettingsWindow* settingsWindow, Engine* engine)
+{
+    settingsWindow->RegisterFloatParameter("Kernel Radius", 0.3f,
+    [engine](float new_value)
+    {
+        engine->densitySystem.SetKernelRadius(new_value);
+    }); 
+
+    settingsWindow->RegisterFloatParameter("Collision Damping Factor", 0.8f,
+    [engine](float new_value)
+    {
+        engine->SetCollisionDampingFactor(new_value);
+    }); 
+}
+
 int main(int argc, char** argv)
 {
     int width = 2500;
@@ -36,8 +51,6 @@ int main(int argc, char** argv)
 
     SettingsWindow* settingsWindow = new SettingsWindow("Settings", 300, height, 100, 100);
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
-
-
 
     Camera camera(width, height);
     Renderer* renderer = new Renderer(&camera);
@@ -48,11 +61,7 @@ int main(int argc, char** argv)
 	InputManager inputManager;
     Engine* engine = new Engine(&camera, scene);
 
-    settingsWindow->RegisterFloatParameter("Kernel Radius", 0.3f,
-        [engine](float initial_value)
-        {
-            engine->densitySystem.SetKernelRadius(initial_value);
-        }); 
+    InitializeSettingsWindow(settingsWindow, engine);
 
     bool running = true;
     SDL_Event event;

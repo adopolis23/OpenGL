@@ -57,6 +57,11 @@ public:
     float stiffness = 1.0f;    // pressure constant
     float viscosity = 0.002f;   // small stabilizing viscosity
 
+    void SetRestDensity(float new_rest_density);
+    void SetStiffness(float new_stiffness);
+    void SetViscosity(float new_viscosity);
+    
+
 private:
     
     // radius: radius of the influence of the kernel

@@ -181,3 +181,10 @@ void Engine::ApplyPressureForceToParticles(Scene& scene, float dt)
         if (obj->velocity.y < -max_velocity) obj->velocity.y = -max_velocity;
     }
 }
+
+
+
+void Engine::SetCollisionDampingFactor(float new_value)
+{
+    collisionDampingFactor = new_value;
+}

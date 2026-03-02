@@ -23,13 +23,14 @@ public:
     // engine needs a ref to the camera to compute collisions and effects with the walls
     Engine(const Camera* cam, const Scene& scene);
 
-    
     // takes a physics step for objects in a scene. scaled by the time that has passed between draws `dt`
     void Update(Scene& scene, float dt);
     
     DensitySystem densitySystem;
 
     void ApplyRadialForceToParticlesAtPosition(Scene& scene, const glm::vec2& position, float forceMagnitude, float radius, float dt);
+
+    void SetCollisionDampingFactor(float new_value);
 
 private:
     
