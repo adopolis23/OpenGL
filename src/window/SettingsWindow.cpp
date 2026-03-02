@@ -112,21 +112,21 @@ void SettingsWindow::CreateMainSettingsWindow()
     ImGui::Separator();
 
     // Float parameters
-    for (auto& [name, value] : floatValues) {
-        if (ImGui::SliderFloat(name.c_str(), &value, 0.0f, 2.0f, "%.1f")) {
-            floatValues[name] = value;
-            if (floatCallbacks.count(name)) {
-                floatCallbacks[name](value);  // Trigger callback
+    for (auto& [param_name, value] : floatValues) {
+        if (ImGui::SliderFloat(param_name.c_str(), &value, 0.0f, 2.0f, "%.1f")) {
+            floatValues[param_name] = value;
+            if (floatCallbacks.count(param_name)) {
+                floatCallbacks[param_name](value);  // Trigger callback
             }
         }
     }
     
     // Int parameters
-    for (auto& [name, value] : intValues) {
-        if (ImGui::SliderInt(name.c_str(), &value, 0, 100)) {
-            intValues[name] = value;
-            if (intCallbacks.count(name)) {
-                intCallbacks[name](value);
+    for (auto& [param_name, value] : intValues) {
+        if (ImGui::SliderInt(param_name.c_str(), &value, 0, 100)) {
+            intValues[param_name] = value;
+            if (intCallbacks.count(param_name)) {
+                intCallbacks[param_name](value);
             }
         }
     }
