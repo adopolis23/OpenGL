@@ -42,6 +42,24 @@ void InitializeSettingsWindow(SettingsWindow* settingsWindow, Engine* engine)
     {
         engine->SetCollisionDampingFactor(new_value);
     }); 
+
+    settingsWindow->RegisterFloatParameter("Stiffness", 1.0f,
+    [engine](float new_value)
+    {
+        engine->densitySystem.SetStiffness(new_value);
+    }); 
+
+    settingsWindow->RegisterFloatParameter("Rest Density", 1.0f,
+    [engine](float new_value)
+    {
+        engine->densitySystem.SetRestDensity(new_value);
+    }); 
+
+    settingsWindow->RegisterFloatParameter("Viscosity", 0.002f,
+    [engine](float new_value)
+    {
+        engine->densitySystem.SetViscosity(new_value);
+    }); 
 }
 
 int main(int argc, char** argv)
@@ -49,7 +67,7 @@ int main(int argc, char** argv)
     int width = 2500;
     int height = 600;
 
-    SettingsWindow* settingsWindow = new SettingsWindow("Settings", 300, height, 100, 100);
+    SettingsWindow* settingsWindow = new SettingsWindow("Settings", 400, 200, 100, 100);
     Window* window = new Window("Particle Simulation", width, height, 0, SDL_WINDOWPOS_CENTERED);
 
     Camera camera(width, height);

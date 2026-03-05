@@ -363,3 +363,16 @@ void DensitySystem::CalculatePressureForParticles(const Scene& scene)
         particlePressureForce[id] = force;
     }
 }
+
+void DensitySystem::SetRestDensity(float new_rest_density)
+{
+    restDensity = new_rest_density;
+}
+void DensitySystem::SetStiffness(float new_stiffness)
+{
+    stiffness = new_stiffness;
+}
+void DensitySystem::SetViscosity(float new_viscosity)
+{
+    viscosity = new_viscosity;
+}
